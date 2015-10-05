@@ -7,7 +7,7 @@
 Token::Token() {
     strNum = 0;
     strPos = 0;
-    tokenType = (LEX_TYPE)0;
+    tokenType = TK_ERROR;
     text = "";
     data1 = 0;
     data2 = 0;
@@ -109,22 +109,22 @@ string Token::getTokenTypeStr(LEX_TYPE lt) {
 
 void Token::print() {
     int tt = getTokenType(tokenType);
-    printf("%d\t%d\t%s\t%s\t", strNum, strPos, getTokenTypeStr(tokenType).c_str(), text.c_str());
+    printf("%d\t%d\t%s\t%s", strNum, strPos, getTokenTypeStr(tokenType).c_str(), text.c_str());
     switch (tt) {
         case 2:
         case 4:
-            printf("%d\n", data1);
+            printf("\t%d\n", data1);
             break;
         case 3: {
             double real = data1 * pow(10, data2 + data3);
-            printf("%.4E\n", real);
+            printf("\t%.4E\n", real);
             break;
         }
         case 5:
-            printf("%c\n", (char)data1);
+            printf("\t%c\n", (char)data1);
             break;
         case 6:
-            printf("%s\n", text.substr(1, text.length() - 2).c_str());
+            printf("\t%s\n", text.substr(1, text.length() - 2).c_str());
             break;
         default:
             printf("\n");

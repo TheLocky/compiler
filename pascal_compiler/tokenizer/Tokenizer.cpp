@@ -22,7 +22,7 @@ Token Tokenizer::Next() {
     string real_src = "";
     string lex_data = "";
     int exp_sign = 1;
-    Token result(currentStr, 0, (LEX_TYPE)0, "", 0, 0, 0);
+    Token result(currentStr, 0, TK_ERROR, "", 0, 0, 0);
     while (true) {
         char symbol = (char)file->get();
         currentPos++;
@@ -140,6 +140,7 @@ Token Tokenizer::Next() {
                 real_src = real_src.substr(0, real_src.length()-1);
                 file->unget();
                 file->unget();
+                currentPos-=2;
                 break;
             case ST_NUMBER_EXP:
                 result.tokenType = TK_REAL;

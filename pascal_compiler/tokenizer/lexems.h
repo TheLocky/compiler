@@ -34,6 +34,7 @@ using std::string;
  */
 
 enum LEX_TYPE {
+        TK_ERROR = -1,
         //global
 /*1*/   TK_ID = 1, TK_INT, TK_REAL, TK_HEX, TK_CHAR, TK_STRING,
         //reserved words
