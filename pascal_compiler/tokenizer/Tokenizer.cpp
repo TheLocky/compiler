@@ -9,7 +9,7 @@ Tokenizer::Tokenizer(ifstream *file): file(file),
                                       currentStr(1),
                                       currentPos(0),
                                       currentTok(Token()),
-                                      eof(false) {}
+                                      eof(false) { States::Build(); }
 
 Token Tokenizer::Next() {
     if (eof)
@@ -18,8 +18,8 @@ Token Tokenizer::Next() {
         eof = true;
         return Token();
     }
-    States currentState = ST_BEGIN;
-    States additionalState = ST_BEGIN;
+    __States currentState = ST_BEGIN;
+    __States additionalState = ST_BEGIN;
 
     string real_src = "";
     string lex_data = "";
@@ -31,7 +31,7 @@ Token Tokenizer::Next() {
     while (true) {
         char symbol = (char)file->get();
         currentPos++;
-        States newState = StatesTable[symbol][currentState];
+        __States newState = States::Table[symbol][currentState];
         if (additionalState == ST_DBLPOINT) {
             newState = ST_BEGIN;
             additionalState = ST_BEGIN;

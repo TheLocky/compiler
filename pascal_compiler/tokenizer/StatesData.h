@@ -7,7 +7,7 @@
 
 #define CHAR_COUNT (128)
 
-enum States {
+enum __States {
     ST_SKIP = -1,
     ST_BEGIN = 0,
     ST_IDENT,
@@ -34,19 +34,16 @@ enum States {
     ST_LAST
 };
 
-static States StatesTable[CHAR_COUNT][ST_LAST];
-static void Build();
-static void BuildNumbers();
-static void BuildIdents();
-static void BuildComments();
-static void BuildStrings();
-static void BuildSpecial();
+class States {
+public:
+    static __States Table[CHAR_COUNT][ST_LAST];
 
-static class __Init_States {
-    static __Init_States() {
-        Build();
-    }
+    static void Build();
+    static void BuildNumbers();
+    static void BuildIdents();
+    static void BuildComments();
+    static void BuildStrings();
+    static void BuildSpecial();
 };
-
 
 #endif //PASCAL_COMPILER_STATECONTROLLER_H
