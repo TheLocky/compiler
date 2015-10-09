@@ -58,7 +58,7 @@ static special specials [] {
 
 static bool validateToken(LEX_TYPE token, ...) {
     LEX_TYPE *arg = &token;
-    while (arg++) {
+    while (*(arg += 2)) {
         if (*arg == token)
             return true;
     }
