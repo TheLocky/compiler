@@ -8,8 +8,9 @@
 #include <fstream>
 #include <algorithm>
 #include "Token.h"
-#include "StateController.h"
-#include "../exception/TokenException.h"
+#include "StatesData.h"
+#include "exception/TokenException.h"
+
 using std::ifstream;
 
 class Tokenizer {
@@ -17,7 +18,6 @@ private:
     ifstream *file = NULL;
     int currentStr;
     int currentPos;
-    States globalState;
     Token currentTok;
     bool eof;
 public:

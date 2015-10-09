@@ -2,21 +2,21 @@
 // Created by xtpvx on 28.09.2015.
 //
 
-#include "StateController.h"
+#include "StatesData.h"
 
-States StateController::StatesTable[128][ST_COUNT];
+States StatesTable[128][ST_LAST];
 
-void StateController::Build() {
-    for (int i = 0; i < 128; ++i) {
+void Build() {
+    for (int i = 0; i < CHAR_COUNT; ++i) {
         StatesTable[i][ST_BEGIN] = ST_BADCHAR;
-        for (int j = 1; j < 100; ++j) {
+        for (int j = 1; j < ST_LAST; ++j) {
             StatesTable[i][j] = ST_BEGIN;
         }
     }
     StatesTable[' '][ST_BEGIN] = ST_SKIP;
     StatesTable['\t'][ST_BEGIN] = ST_SKIP;
     StatesTable['\n'][ST_BEGIN] = ST_SKIP;
-    for (int i = 0; i < 100; ++i)
+    for (int i = 0; i < ST_LAST; ++i)
         StatesTable['\r'][i] = ST_SKIP;
     BuildNumbers();
     BuildIdents();
@@ -25,7 +25,7 @@ void StateController::Build() {
     BuildSpecial();
 }
 
-void StateController::BuildNumbers() {
+void BuildNumbers() {
     //для всех чисел
     for (int i = '0'; i <= '9'; ++i) {
         StatesTable[i][ST_BEGIN] = ST_NUMBER_ALL;
@@ -42,7 +42,7 @@ void StateController::BuildNumbers() {
     StatesTable['.'][ST_NUMBER_ALL] = ST_NUMBER_DBL_FIRST; //1.
     for (int i = 0; i < '0'; ++i)
         StatesTable[i][ST_NUMBER_DBL_FIRST] = ST_NOFRACT;
-    for (int i = '9'+1; i < 128; ++i)
+    for (int i = '9'+1; i < CHAR_COUNT; ++i)
         StatesTable[i][ST_NUMBER_DBL_FIRST] = ST_NOFRACT;
     StatesTable['.'][ST_NUMBER_DBL_FIRST] = ST_DBLPOINT; //Исключение разделителя
     //число с экспонентой
@@ -54,7 +54,7 @@ void StateController::BuildNumbers() {
         StatesTable[i][ST_NUMBER_EXP] = ST_NOEXP;
         StatesTable[i][ST_NUMBER_EXP_SIGN] = ST_NOEXP;
     }
-    for (int i = '9'+1; i < 128; ++i) {
+    for (int i = '9'+1; i < CHAR_COUNT; ++i) {
         StatesTable[i][ST_NUMBER_EXP] = ST_NOEXP;
         StatesTable[i][ST_NUMBER_EXP_SIGN] = ST_NOEXP;
     }
@@ -76,7 +76,7 @@ void StateController::BuildNumbers() {
     }
 }
 
-void StateController::BuildIdents() {
+void BuildIdents() {
     for (int i = 'A'; i < 'Z'; ++i) {
         StatesTable[i][ST_BEGIN] = ST_IDENT;
         StatesTable[i][ST_IDENT] = ST_IDENT;
@@ -90,9 +90,9 @@ void StateController::BuildIdents() {
     }
 }
 
-void StateController::BuildComments() {
+void BuildComments() {
     StatesTable['{'][ST_BEGIN] = ST_COMMENT1_OP;
-    for (int i = 0; i < 128; ++i) {
+    for (int i = 0; i < CHAR_COUNT; ++i) {
         StatesTable[i][ST_COMMENT1_OP] = ST_COMMENT1_OP;
         StatesTable[i][ST_COMMENT2_OP] = ST_COMMENT2_OP;
     }
@@ -100,9 +100,9 @@ void StateController::BuildComments() {
     StatesTable['\n'][ST_COMMENT2_OP] = ST_COMMENT2_CL;
 }
 
-void StateController::BuildStrings() {
+void BuildStrings() {
     StatesTable['\''][ST_BEGIN] = ST_STRING_OP;
-    for (int i = 0; i < 128; ++i) {
+    for (int i = 0; i < CHAR_COUNT; ++i) {
         StatesTable[i][ST_STRING_OP] = ST_STRING_OP;
         StatesTable[i][ST_STR_SCREEN] = ST_STRING_OP;
     }
@@ -116,12 +116,12 @@ void StateController::BuildStrings() {
         StatesTable[i][ST_CHAR] = ST_CHAR_NUM;
         StatesTable[i][ST_CHAR_NUM] = ST_CHAR_NUM;
     }
-    for (int i = '9'+1; i < 128; ++i)
+    for (int i = '9'+1; i < CHAR_COUNT; ++i)
         StatesTable[i][ST_CHAR] = ST_NOCC;
     StatesTable['$'][ST_CHAR] = ST_NUMBER_HEX;
 }
 
-void StateController::BuildSpecial() {
+void BuildSpecial() {
     StatesTable['+'][ST_BEGIN] = ST_SPECIAL_E;
     StatesTable['-'][ST_BEGIN] = ST_SPECIAL_E;
     StatesTable['*'][ST_BEGIN] = ST_SPECIAL_E;
@@ -144,15 +144,4 @@ void StateController::BuildSpecial() {
     StatesTable['>'][ST_SPECIAL_EB] = ST_SPECIAL_DBL;
     StatesTable['.'][ST_SPECIAL_P] = ST_SPECIAL_DBL;
     StatesTable['/'][ST_SPECIAL_E] = ST_COMMENT2_OP;
-}
-
-
-void StateController::Print() {
-    for (int i = 0; i < 128; ++i) {
-        printf("%c ", (char)i);
-        for (int j = ST_BEGIN; j < ST_SPECIAL_DBL; ++j) {
-            printf("%d ", StatesTable[i][j]);
-        }
-        printf("\n");
-    }
 }

@@ -9,9 +9,8 @@ Token::Token() {
     strPos = 0;
     tokenType = TK_ERROR;
     text = "";
-    data1 = 0;
-    data2 = 0;
-    data3 = 0;
+    intData = 0;
+    realData = 0;
 }
 
 Token::Token(const Token &src) {
@@ -19,9 +18,8 @@ Token::Token(const Token &src) {
     strPos = src.strPos;
     tokenType = src.tokenType;
     text = src.text;
-    data1 = src.data1;
-    data2 = src.data2;
-    data3 = src.data3;
+    intData = src.intData;
+    realData = src.realData;
 }
 
 int Token::getTokenType(LEX_TYPE lt) {
@@ -72,11 +70,11 @@ int Token::getTokenType(LEX_TYPE lt) {
         case TK_SUB:
         case TK_MUL:
         case TK_DIV_S:
-        case TK_ADDE:
-        case TK_SUBE:
-        case TK_MULE:
-        case TK_DIVE:
-        case TK_ASGN:
+        case TK_ADD_E:
+        case TK_SUB_E:
+        case TK_MUL_E:
+        case TK_DIV_E:
+        case TK_ASSIGN:
         case TK_POINTER:
         case TK_ADDR: return 8;//"op"
         case TK_RB:
@@ -113,15 +111,14 @@ void Token::print() {
     switch (tt) {
         case 2:
         case 4:
-            printf("\t%d\n", data1);
+            printf("\t%d\n", intData);
             break;
         case 3: {
-            double real = data1 * pow(10, data2 + data3);
-            printf("\t%.4E\n", real);
+            printf("\t%.4E\n", realData);
             break;
         }
         case 5:
-            printf("\t%c\n", (char)data1);
+            printf("\t%c\n", (char) intData);
             break;
         case 6:
             printf("\t%s\n", text.substr(1, text.length() - 2).c_str());

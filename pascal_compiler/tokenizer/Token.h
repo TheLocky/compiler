@@ -6,7 +6,7 @@
 #define PASCAL_COMPILER_TOKEN_H
 
 #include <string>
-#include "lexems.h"
+#include "TokenTypes.h"
 #include <math.h>
 
 using std::string;
@@ -21,15 +21,14 @@ public:
     int strPos;
     LEX_TYPE tokenType;
     string text;
-    int data1;
-    int data2;
-    int data3;
+    int intData;
+    double realData;
 
 
     Token(int strNum, int strPos, LEX_TYPE tokenType,
-          const string &text, int data1, int data2, int data3) :
+          const string &text, int data1, double data2) :
             strNum(strNum), strPos(strPos), tokenType(tokenType),
-            text(text), data1(data1), data2(data2), data3(data3) { }
+            text(text), intData(data1), realData(data2) { }
 
     Token();
 

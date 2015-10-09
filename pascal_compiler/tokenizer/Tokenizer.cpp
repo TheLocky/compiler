@@ -3,11 +3,11 @@
 //
 
 #include "Tokenizer.h"
+#define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
 Tokenizer::Tokenizer(ifstream *file): file(file),
                                       currentStr(1),
                                       currentPos(0),
-                                      globalState(ST_BEGIN),
                                       currentTok(Token()),
                                       eof(false) {}
 
@@ -19,17 +19,22 @@ Token Tokenizer::Next() {
         return Token();
     }
     States currentState = ST_BEGIN;
+    States additionalState = ST_BEGIN;
+
     string real_src = "";
     string lex_data = "";
+    int fract = 0;
+    int exp = 0;
     int exp_sign = 1;
-    Token result(currentStr, 0, TK_ERROR, "", 0, 0, 0);
+
+    Token result(currentStr, 0, TK_ERROR, "", 0, 0);
     while (true) {
         char symbol = (char)file->get();
         currentPos++;
-        States newState = StateController::StatesTable[symbol][currentState];
-        if (globalState == ST_DBLPOINT) {
+        States newState = StatesTable[symbol][currentState];
+        if (additionalState == ST_DBLPOINT) {
             newState = ST_BEGIN;
-            globalState = ST_BEGIN;
+            additionalState = ST_BEGIN;
         }
         if (file->eof()) {
             eof = true;
@@ -47,7 +52,7 @@ Token Tokenizer::Next() {
                     case TK_ID: {
                         string tmp = lex_data;
                         std::transform(tmp.begin(), tmp.end(), tmp.begin(), ::tolower);
-                        for (int i = 0; i < 30; ++i)
+                        for (int i = 0; i < ARRAY_SIZE(keyWords); ++i)
                             if (tmp.compare(keyWords[i].text) == 0) {
                                 result.tokenType = keyWords[i].type;
                                 break;
@@ -57,14 +62,14 @@ Token Tokenizer::Next() {
                     }
                     case TK_INT:
                         result.text = lex_data;
-                        result.data1 = std::stoi(lex_data);
+                        result.intData = std::stoi(lex_data);
                         break;
                     case TK_REAL:
                         result.text = real_src;
-                        result.data1 = std::stoi(lex_data);
-                        if (result.data2 != 0)
-                            result.data2 = result.data2 - (int)lex_data.length();
-                        result.data3 *= exp_sign;
+                        if (fract != 0)
+                            fract -= (int)lex_data.length();
+                        exp *= exp_sign;
+                        result.realData = std::stoi(lex_data) * pow(10, fract + exp);
                         break;
                     case TK_HEX:
                         result.text = real_src;
@@ -76,7 +81,7 @@ Token Tokenizer::Next() {
                                 ch -= 48;
                             else
                                 ch -= 55;
-                            result.data1 += ch * pow(16, i);
+                            result.intData += ch * pow(16, i);
                         }
                         break;
                     case TK_CHAR:
@@ -86,22 +91,21 @@ Token Tokenizer::Next() {
                                 char ch = lex_data[(int) lex_data.length() - i - 1];
                                 if (ch > 'F')
                                     ch -= 32;
-                                result.data1 += (ch - 55) * pow(16, i);
+                                result.intData += (ch - 55) * pow(16, i);
                             }
                         }
-                        globalState = ST_BEGIN;
                         break;
                     case TK_MUL:
                         result.text = lex_data;
-                        for (int i = 0; i < 16; ++i)
+                        for (int i = 0; i < ARRAY_SIZE(specials); ++i)
                             if (result.text.compare(specials[i].s) == 0) {
                                 result.tokenType = specials[i].type;
                                 break;
                             }
                         break;
-                    case TK_MULE:
+                    case TK_MUL_E:
                         result.text = lex_data;
-                        for (int i = 0; i < 9; ++i)
+                        for (int i = 0; i < ARRAY_SIZE(specialDbls); ++i)
                             if (result.text.compare(specialDbls[i].sD) == 0) {
                                 result.tokenType = specialDbls[i].type;
                                 break;
@@ -130,13 +134,13 @@ Token Tokenizer::Next() {
                 result.tokenType = TK_REAL;
                 real_src += symbol;
                 if (symbol == '.')
-                    result.data2 = (int)lex_data.length();
+                    fract = (int)lex_data.length();
                 else
                     lex_data += symbol;
                 break;
             case ST_DBLPOINT:
                 result.tokenType = TK_INT;
-                globalState = ST_DBLPOINT;
+                additionalState = ST_DBLPOINT;
                 real_src = real_src.substr(0, real_src.length()-1);
                 file->unget();
                 file->unget();
@@ -153,12 +157,12 @@ Token Tokenizer::Next() {
                 break;
             case ST_NUMBER_EXP_VAL:
                 real_src += symbol;
-                result.data3 = result.data3 * 10 + (int)symbol - 48;
+                exp = exp * 10 + (int)symbol - 48;
                 break;
             case ST_NUMBER_HEX:
                 if (result.strPos == 0)
                     result.strPos = currentPos;
-                if (globalState == ST_CHAR)
+                if (additionalState == ST_CHAR)
                     result.tokenType = TK_CHAR;
                 else
                     result.tokenType = TK_HEX;
@@ -167,7 +171,7 @@ Token Tokenizer::Next() {
                     lex_data += symbol;
                 break;
             case ST_CHAR:
-                globalState = ST_CHAR;
+                additionalState = ST_CHAR;
                 if (result.strPos == 0)
                     result.strPos = currentPos;
                 result.tokenType = TK_CHAR;
@@ -175,10 +179,10 @@ Token Tokenizer::Next() {
                 break;
             case ST_CHAR_NUM:
                 real_src += symbol;
-                result.data1 = result.data1 * 10 + (int)symbol - 48;
+                result.intData = result.intData * 10 + (int)symbol - 48;
                 break;
             case ST_STRING_OP:
-                globalState = ST_STRING_OP;
+                additionalState = ST_STRING_OP;
                 if (result.strPos == 0)
                     result.strPos = currentPos;
                 result.tokenType = TK_STRING;
@@ -192,10 +196,9 @@ Token Tokenizer::Next() {
                 result.text = real_src;
                 if (result.text.length() == 3) {
                     result.tokenType = TK_CHAR;
-                    result.data1 = (int)result.text[1];
+                    result.intData = (int)result.text[1];
                 }
                 currentTok = Token(result);
-                globalState = ST_BEGIN;
                 return result;
             //comments
             case ST_COMMENT1_OP:break;
@@ -216,7 +219,7 @@ Token Tokenizer::Next() {
                 lex_data += symbol;
                 break;
             case ST_SPECIAL_DBL:
-                result.tokenType = TK_MULE;
+                result.tokenType = TK_MUL_E;
                 lex_data += symbol;
                 break;
 
