@@ -2,6 +2,7 @@
 // Created by xtpvx on 30.09.2015.
 //
 
+#include <c++/sstream>
 #include "Token.h"
 
 Token::Token() {
@@ -106,25 +107,33 @@ string Token::getTokenTypeStr(LEX_TYPE lt) {
 }
 
 void Token::print() {
-    int tt = getTokenType(tokenType);
     printf("%d\t%d\t%s\t%s", strNum, strPos, getTokenTypeStr(tokenType).c_str(), text.c_str());
+    string data = getStr();
+    if (!data.empty())
+        printf("\t%s", data.c_str());
+    printf("\n");
+}
+
+string Token::getStr() {
+    std::stringstream ss;
+    int tt = getTokenType(tokenType);
     switch (tt) {
         case 2:
         case 4:
-            printf("\t%d\n", intData);
+            ss << intData;
             break;
         case 3: {
-            printf("\t%.4E\n", realData);
+            ss.precision(4);
+            ss << std::scientific << realData;
             break;
         }
         case 5:
-            printf("\t%c\n", (char) intData);
+            ss << intData;
             break;
         case 6:
-            printf("\t%s\n", text.substr(1, text.length() - 2).c_str());
-            break;
+            return text.substr(1, text.length() - 2);
         default:
-            printf("\n");
-            break;
+            return "";
     }
+    return ss.str();
 }

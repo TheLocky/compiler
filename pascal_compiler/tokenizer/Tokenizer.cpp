@@ -9,7 +9,7 @@ Tokenizer::Tokenizer(ifstream *file): file(file),
                                       currentStr(1),
                                       currentPos(0),
                                       currentTok(Token()),
-                                      eof(false) { States::Build(); }
+                                      eof(false) { States::Build(); Next(); }
 
 Token Tokenizer::Next() {
     if (eof)
@@ -26,18 +26,21 @@ Token Tokenizer::Next() {
     int fract = 0;
     int exp = 0;
     int exp_sign = 1;
+    bool __eof = false;
 
-    Token result(currentStr, 0, TK_ERROR, "", 0, 0);
+    Token result(currentStr, currentPos, TK_ERROR, "", 0, 0);
     while (true) {
         char symbol = (char)file->get();
+        __eof = file->eof();
         currentPos++;
         __States newState = States::Table[symbol][currentState];
         if (additionalState == ST_DBLPOINT) {
             newState = ST_BEGIN;
             additionalState = ST_BEGIN;
         }
-        if (file->eof()) {
-            eof = true;
+        if (__eof) {
+            if (currentState == ST_BEGIN)
+                eof = true;
             if (currentState == ST_STRING_OP || currentState == ST_COMMENT2_OP)
                 throw TokenException(result.strNum, result.strPos, result.text, "BadEOF");
             newState = ST_BEGIN;
@@ -112,7 +115,8 @@ Token Tokenizer::Next() {
                             }
                         break;
                 }
-                file->unget();
+                if (!__eof)
+                    file->unget();
                 currentPos--;
                 currentTok = Token(result);
                 return result;

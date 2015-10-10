@@ -35,6 +35,7 @@ public:
     Token(const Token& src);
 
     void print();
+    string getStr();
 };
 
 

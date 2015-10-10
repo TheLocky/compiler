@@ -9,7 +9,7 @@
 #include <algorithm>
 #include "Token.h"
 #include "StatesData.h"
-#include "exception/TokenException.h"
+#include "exception/Exception.h"
 
 using std::ifstream;
 
