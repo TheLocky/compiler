@@ -27,6 +27,7 @@ private:
 public:
     SyntaxException(int str, int pos, const string &error);
     void print();
+    string getErrorText() const;
 };
 
 

@@ -3,7 +3,7 @@
 #endif
 
 #define VERSION ("0.02a")
-#define OUT_TO_FILE
+//#define OUT_TO_FILE
 
 #include "tokenizer/Tokenizer.h"
 #include "parser/Parser.h"
@@ -42,15 +42,17 @@ void startTokenizer(char *file) {
 }
 
 void startParser(char *file) {
-    string outFile = string("out_") + file;
+    string outFile = file;
+    auto sep = outFile.find_last_of('.');
+    outFile = outFile.substr(0, sep) + "_out." + outFile.substr(sep + 1, outFile.length());
     changeOut(outFile.c_str(), true);
 
     ifstream *stream = new ifstream();
     stream->open(file, std::ifstream::binary);
     try {
         Parser parser(stream);
-        Expression *expr = parser.ParseExpr();
-        expr->print("");
+        NodeBlock *block = parser.Parse();
+        block->print("");
     } catch (TokenException e) {
         e.print();
     } catch (SyntaxException e) {

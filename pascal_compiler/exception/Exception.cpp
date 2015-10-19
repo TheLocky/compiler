@@ -24,3 +24,7 @@ SyntaxException::SyntaxException(int str, int pos, const string &error) {
 void SyntaxException::print() {
     printf("(%d:%d) syntax error: %s", strNum, strPos, errorText.c_str());
 }
+
+string SyntaxException::getErrorText() const {
+    return errorText;
+}
