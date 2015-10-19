@@ -3,13 +3,14 @@
 //
 
 #include "Tokenizer.h"
+#include "StatesData.h"
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof(x[0]))
 
 Tokenizer::Tokenizer(ifstream *file): file(file),
                                       currentStr(1),
                                       currentPos(0),
                                       currentTok(Token()),
-                                      eof(false) { States::Build(); Next(); }
+                                      eof(false) { Next(); }
 
 Token Tokenizer::Next() {
     if (eof)
@@ -18,8 +19,8 @@ Token Tokenizer::Next() {
         eof = true;
         return Token();
     }
-    __States currentState = ST_BEGIN;
-    __States additionalState = ST_BEGIN;
+    StatesEnum currentState = ST_BEGIN;
+    StatesEnum additionalState = ST_BEGIN;
 
     string real_src = "";
     string lex_data = "";
@@ -28,12 +29,12 @@ Token Tokenizer::Next() {
     int exp_sign = 1;
     bool __eof = false;
 
-    Token result(currentStr, currentPos, TK_ERROR, "", 0, 0);
+    Token result(currentStr, currentPos + 1, TK_ERROR, "", 0, 0);
     while (true) {
         char symbol = (char)file->get();
         __eof = file->eof();
         currentPos++;
-        __States newState = States::Table[symbol][currentState];
+        StatesEnum newState = States::Table[symbol][currentState];
         if (additionalState == ST_DBLPOINT) {
             newState = ST_BEGIN;
             additionalState = ST_BEGIN;

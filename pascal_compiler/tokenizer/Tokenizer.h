@@ -8,7 +8,6 @@
 #include <fstream>
 #include <algorithm>
 #include "Token.h"
-#include "StatesData.h"
 #include "exception/Exception.h"
 
 using std::ifstream;

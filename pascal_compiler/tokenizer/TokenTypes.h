@@ -5,7 +5,9 @@
 #ifndef PASCAL_COMPILER_LEXEMS_H
 #define PASCAL_COMPILER_LEXEMS_H
 
+#include <list>
 #include <string>
+#include <cstdarg>
 
 using std::string;
 
@@ -53,16 +55,28 @@ static specialDbl specialDbls [] {
 static special specials [] {
         {"+", TK_ADD}, {"-", TK_SUB}, {"*", TK_MUL}, {"/", TK_DIV_S}, {"^", TK_POINTER},
         {">", TK_CGT}, {"<", TK_CLT}, {"@", TK_ADDR}, {".", TK_POINT}, {"(", TK_LB}, {")", TK_RB},
-        {"[", TK_LSQB}, {"]", TK_RSQB}, {";", TK_SEMICOLON}, {":", TK_COLON}, {",", TK_COMMA}
+        {"[", TK_LSQB}, {"]", TK_RSQB}, {";", TK_SEMICOLON}, {":", TK_COLON}, {",", TK_COMMA}, {"=", TK_CE}
 };
 
-static bool validateToken(LEX_TYPE token, ...) {
-    LEX_TYPE *arg = &token;
-    while (*(arg += 2)) {
-        if (*arg == token)
+static bool checkToken(LEX_TYPE token, std::list<LEX_TYPE> list) {
+    for (std::list<LEX_TYPE>::iterator i = list.begin(); i != list.end(); i++) {
+        if (*i == token)
             return true;
     }
     return false;
+}
+
+static std::list<LEX_TYPE> lexList(LEX_TYPE first, ...) {
+    va_list args;
+    va_start(args, first);
+    LEX_TYPE tmp;
+    std::list<LEX_TYPE> result;
+    result.push_back(first);
+    while ((tmp = (LEX_TYPE)va_arg(args, int)) != 0){
+        result.push_back(tmp);
+    }
+    va_end(args);
+    return result;
 }
 
 #endif //PASCAL_COMPILER_LEXEMS_H

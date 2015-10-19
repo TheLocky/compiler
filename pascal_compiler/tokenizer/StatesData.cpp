@@ -4,7 +4,7 @@
 
 #include "StatesData.h"
 
-__States States::Table[CHAR_COUNT][ST_LAST];
+StatesEnum States::Table[CHAR_COUNT][ST_LAST];
 
 void States::Build() {
     for (int i = 0; i < CHAR_COUNT; ++i) {
