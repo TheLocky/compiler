@@ -8,33 +8,34 @@
 #include "tokenizer/Tokenizer.h"
 #include "Node.h"
 #include "exception/Exception.h"
-
-static std::list<LEX_TYPE> priority[] = {
-        lexList(TK_ADD, TK_SUB, 0),
-        lexList(TK_MUL, TK_DIV, 0),
-        lexList(TK_CGT, TK_CLT, TK_CGE, TK_CLE, TK_CNE, TK_CE, 0)
-};
+#include "SymTable.h"
 
 class Parser {
 private:
     Tokenizer tokenizer;
+    SymTable symTable;
 
-    inline void checkEof();
+    inline void thExpectedExpr(Node *node);
+    void requireToken(LEX_TYPE tok, string tokStr);
 
-    std::list<Node*> ParseParameters();
-    Node *ParseFunction();
-    Node *ParseRecordAccess();
-    Node *ParseArrayIndex();
+    std::vector<Node*> ParseParameters();
+    Node *ParseDesignator();
     Node *ParseAssign();
-    Node *ParseUnary();
     Node *ParseBinary(int level);
     Node *ParseFactor();
 
     NodeBlock *ParseBlock();
+    //type decl
+    void ParseTypeBlock();
+    SymType *ParseType(string name);
+    SymConst *ParseConstantExpr(string name, std::list<LEX_TYPE> allowTypes);
+    SymTypeSubRange *ParseTypeSubRange(string name);
+
 
 public:
     Parser(ifstream *file) : tokenizer(file) {}
     NodeBlock *Parse();
+    SymTable getSymbolsTable() const;
 };
 
 

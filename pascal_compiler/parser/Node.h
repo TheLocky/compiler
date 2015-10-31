@@ -58,6 +58,20 @@ public:
     void print(string prefix);
 };
 
+class NodeStringConst : public Node {
+public:
+    NodeStringConst(Token tk);
+
+    void print(string prefix);
+};
+
+class NodeCharConst : public Node {
+public:
+    NodeCharConst(Token tk);
+
+    void print(string prefix);
+};
+
 class NodeVariable : public Node {
 public:
     NodeVariable(Token tk);
@@ -86,11 +100,18 @@ public:
 };
 
 class NodeFunc : public Node {
-private:
+protected:
     Node *parent;
-    std::list<Node*> params;
+    std::vector<Node*> params;
 public:
-    NodeFunc(Node *parent, std::list<Node*> params);
+    NodeFunc(Node *parent, std::vector<Node*> params);
+
+    void print(string prefix);
+};
+
+class NodeCast : public NodeFunc {
+public:
+    NodeCast(Node *parent, Node *parameter);
 
     void print(string prefix);
 };

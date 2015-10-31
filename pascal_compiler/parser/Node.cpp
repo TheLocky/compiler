@@ -9,8 +9,10 @@ void Node::print(string prefix) {
 }
 
 void NodeBlock::print(string prefix) {
+    printf("====== BEGIN BLOCK:\n");
     for (auto i = lines.begin(); i != lines.end(); i++)
         (*i)->print(prefix);
+    printf("====== END BLOCK\n");
 }
 
 ExprBinary::ExprBinary(Token tk, Node * left, Node * right) {
@@ -29,6 +31,14 @@ NodeIntConst::NodeIntConst(Token tk) {
 }
 
 NodeRealConst::NodeRealConst(Token tk) {
+    Node::tk = tk;
+}
+
+NodeStringConst::NodeStringConst(Token tk) {
+    Node::tk = tk;
+}
+
+NodeCharConst::NodeCharConst(Token tk) {
     Node::tk = tk;
 }
 
@@ -66,6 +76,18 @@ void NodeRealConst::print(string prefix) {
     }
 }
 
+void NodeStringConst::print(string prefix) {
+    if (tk.tokenType != TK_ERROR) {
+        printf("%s%s\n", prefix.c_str(), tk.getStr().c_str());
+    }
+}
+
+void NodeCharConst::print(string prefix) {
+    if (tk.tokenType != TK_ERROR) {
+        printf("%s%s\n", prefix.c_str(), tk.getStr().c_str());
+    }
+}
+
 void NodeVariable::print(string prefix) {
     if (tk.tokenType != TK_ERROR) {
         printf("%s%s\n", prefix.c_str(), tk.text.c_str());
@@ -84,11 +106,13 @@ NodeRecordAccess::NodeRecordAccess(Node *left, Node *right) {
     this->right = right;
 }
 
-NodeFunc::NodeFunc(Node *parent, std::list<Node*> params) {
+NodeFunc::NodeFunc(Node *parent, std::vector<Node*> params) {
     tk.tokenType = TK_LB;
     this->parent = parent;
     this->params = params;
 }
+
+NodeCast::NodeCast(Node *parent, Node *parameter) : NodeFunc(parent, std::vector<Node *> {parameter}) {}
 
 NodeAssign::NodeAssign(Node *left, Node *right) {
     tk.tokenType = TK_ASSIGN;
@@ -116,7 +140,6 @@ void NodeRecordAccess::print(string prefix) {
     }
 }
 
-
 void NodeFunc::print(string prefix) {
     if (tk.tokenType != TK_ERROR) {
         if (parent != NULL)
@@ -127,11 +150,21 @@ void NodeFunc::print(string prefix) {
     }
 }
 
+void NodeCast::print(string prefix) {
+    if (tk.tokenType != TK_ERROR) {
+        if (parent != NULL)
+            parent->print(prefix + "\t");
+        printf("%s(%s)\n", prefix.c_str(), tk.text.c_str());
+        if (params.size() > 0)
+            params[0]->print(prefix + "\t");
+    }
+}
+
 void NodeAssign::print(string prefix) {
     if (tk.tokenType != TK_ERROR) {
         if (left != NULL)
             left->print(prefix + "\t");
-        printf("%s%s\n", prefix.c_str(), tk.text.c_str());
+        printf("%s%s\n", prefix.c_str(), ":=");
         if (right != NULL)
             right->print(prefix + "\t");
     }
