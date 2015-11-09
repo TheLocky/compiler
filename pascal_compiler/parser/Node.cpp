@@ -4,46 +4,46 @@
 
 #include "Node.h"
 
-void Node::print(string prefix) {
-    printf("%sempty node", prefix.c_str());
-}
-
-void NodeBlock::print(string prefix) {
-    printf("====== BEGIN BLOCK:\n");
-    for (auto i = lines.begin(); i != lines.end(); i++)
-        (*i)->print(prefix);
-    printf("====== END BLOCK\n");
-}
-
 ExprBinary::ExprBinary(Token tk, Node * left, Node * right) {
     Node::tk = tk;
     this->left = left;
     this->right = right;
+    Node::symbol = left->symbol;
+}
+
+void ExprBinary::setSymbol(Symbols::Symbol *symbol) {
+    Node::symbol = symbol;
 }
 
 ExprUnary::ExprUnary(Token tk, Node *right) {
     Node::tk = tk;
     this->right = right;
+    Node::symbol = right->symbol;
 }
 
-NodeIntConst::NodeIntConst(Token tk) {
+NodeIntConst::NodeIntConst(Token tk, Symbols::Symbol *symbol) {
     Node::tk = tk;
+    Node::symbol = symbol;
 }
 
-NodeRealConst::NodeRealConst(Token tk) {
+NodeRealConst::NodeRealConst(Token tk, Symbols::Symbol *symbol) {
     Node::tk = tk;
+    Node::symbol = symbol;
 }
 
-NodeStringConst::NodeStringConst(Token tk) {
+NodeStringConst::NodeStringConst(Token tk, Symbols::Symbol *symbol) {
     Node::tk = tk;
+    Node::symbol = symbol;
 }
 
-NodeCharConst::NodeCharConst(Token tk) {
+NodeCharConst::NodeCharConst(Token tk, Symbols::Symbol *symbol) {
     Node::tk = tk;
+    Node::symbol = symbol;
 }
 
-NodeVariable::NodeVariable(Token tk) {
+NodeVariable::NodeVariable(Token tk, Symbols::Symbol *symbol) {
     Node::tk = tk;
+    Node::symbol = symbol;
 }
 
 void ExprBinary::print(string prefix) {
@@ -98,6 +98,7 @@ NodeArrayIndex::NodeArrayIndex(Node *parent, Node *child) {
     tk.tokenType = TK_LSQB;
     this->parent = parent;
     this->child = child;
+    Node::symbol = parent->symbol;
 }
 
 NodeRecordAccess::NodeRecordAccess(Node *left, Node *right) {
@@ -112,7 +113,9 @@ NodeFunc::NodeFunc(Node *parent, std::vector<Node*> params) {
     this->params = params;
 }
 
-NodeCast::NodeCast(Node *parent, Node *parameter) : NodeFunc(parent, std::vector<Node *> {parameter}) {}
+NodeCast::NodeCast(Symbols::Symbol *type, Node *parameter) : parameter(parameter) {
+    Node::symbol = type;
+}
 
 NodeAssign::NodeAssign(Node *left, Node *right) {
     tk.tokenType = TK_ASSIGN;
@@ -151,13 +154,8 @@ void NodeFunc::print(string prefix) {
 }
 
 void NodeCast::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        if (parent != NULL)
-            parent->print(prefix + "\t");
-        printf("%s(%s)\n", prefix.c_str(), tk.text.c_str());
-        if (params.size() > 0)
-            params[0]->print(prefix + "\t");
-    }
+        if (parameter != NULL)
+            parameter->print(prefix + "(" + symbol->name.c_str() + ")" + "\t");
 }
 
 void NodeAssign::print(string prefix) {

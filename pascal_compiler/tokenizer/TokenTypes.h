@@ -15,8 +15,8 @@ enum LEX_TYPE {
     TK_ERROR = -1,
     TK_ID = 1, TK_INT, TK_REAL, TK_HEX, TK_CHAR, TK_STRING,
     TK_PROGRAM, TK_BEGIN, TK_END, TK_FWD, TK_FUNCTION, TK_PROCEDURE, TK_RECORD, TK_EXIT,
-    TK_IF, TK_THEN, TK_ELSE, TK_FOR, TK_TO, TK_DOWNTO, TK_WHILE, TK_DO, TK_REPEAT, TK_UNTIL, TK_BREAK, TK_CONTINUE,
-    TK_VAR, TK_TYPE, TK_ARRAY, TK_OF,
+    TK_IF, TK_THEN, TK_ELSE, TK_FOR, TK_TO, TK_DOWNTO, TK_WHILE, TK_DO, TK_REPEAT, TK_UNTIL, TK_BREAK, TK_CONTINUE, TK_CASE,
+    TK_VAR, TK_TYPE, TK_ARRAY, TK_OF, TK_CONST,
     TK_AND, TK_NOT, TK_OR, TK_XOR, TK_CGT, TK_CLT, TK_CGE, TK_CLE, TK_CE, TK_CNE,
     TK_DIV, TK_MOD, TK_ADD, TK_SUB, TK_MUL, TK_DIV_S, TK_ADD_E, TK_SUB_E, TK_MUL_E, TK_DIV_E, TK_ASSIGN,
     TK_POINTER, TK_ADDR,
@@ -40,11 +40,11 @@ struct specialDbl {
 
 static keyWord keyWords[] {
         {"begin", TK_BEGIN}, {"forward", TK_FWD}, {"do", TK_DO}, {"else", TK_ELSE}, {"end", TK_END}, {"for", TK_FOR},
-        {"function", TK_FUNCTION}, {"if", TK_IF}, {"array", TK_ARRAY}, {"of", TK_OF}, {"procedure", TK_PROCEDURE},
-        {"program", TK_PROGRAM}, {"record", TK_RECORD}, {"then", TK_THEN}, {"to", TK_TO}, {"type", TK_TYPE},
-        {"var", TK_VAR}, {"while", TK_WHILE}, {"break", TK_BREAK}, {"continue", TK_CONTINUE}, {"downto", TK_DOWNTO},
-        {"exit", TK_EXIT}, {"repeat", TK_REPEAT}, {"until", TK_UNTIL}, {"and", TK_AND}, {"div", TK_DIV},
-        {"mod", TK_MOD}, {"not", TK_NOT}, {"or", TK_OR}, {"xor", TK_XOR}
+        {"function", TK_FUNCTION}, {"if", TK_IF}, {"array", TK_ARRAY}, {"of", TK_OF}, {"const", TK_CONST},
+        {"procedure", TK_PROCEDURE}, {"program", TK_PROGRAM}, {"record", TK_RECORD}, {"then", TK_THEN}, {"to", TK_TO},
+        {"type", TK_TYPE}, {"var", TK_VAR}, {"while", TK_WHILE}, {"break", TK_BREAK}, {"continue", TK_CONTINUE},
+        {"case", TK_CASE}, {"downto", TK_DOWNTO}, {"exit", TK_EXIT}, {"repeat", TK_REPEAT}, {"until", TK_UNTIL},
+        {"and", TK_AND}, {"div", TK_DIV}, {"mod", TK_MOD}, {"not", TK_NOT}, {"or", TK_OR}, {"xor", TK_XOR}
 };
 
 static specialDbl specialDbls [] {

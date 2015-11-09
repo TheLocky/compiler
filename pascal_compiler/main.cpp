@@ -3,25 +3,23 @@
 #endif
 
 #define VERSION ("0.02a")
-//#define OUT_TO_FILE
 
+#include <typeinfo>
 #include "tokenizer/Tokenizer.h"
 #include "parser/Parser.h"
 
 void changeOut(const char *file, bool inFile) {
-#ifdef OUT_TO_FILE
-    if (inFile)
-        freopen(file, "w", stdout);
+    if (inFile) {
+        string outFile = file;
+        auto sep = outFile.find_last_of('.');
+        outFile = outFile.substr(0, sep) + ".out";
+        freopen(outFile.c_str(), "w", stdout);
+    }
     else
         freopen("CON", "w", stdout);
-#endif
 }
 
 void startTokenizer(char *file) {
-
-    string outFile = string("out_") + file;
-    changeOut(outFile.c_str(), true);
-
     ifstream *stream = new ifstream();
     stream->open(file, std::ifstream::binary);
     try {
@@ -37,21 +35,15 @@ void startTokenizer(char *file) {
         e.print();
     }
     stream->close();
-
-    changeOut("", false);
 }
 
 void startParser(char *file) {
-    string outFile = file;
-    auto sep = outFile.find_last_of('.');
-    outFile = outFile.substr(0, sep) + "_out." + outFile.substr(sep + 1, outFile.length());
-    changeOut(outFile.c_str(), true);
-
     ifstream *stream = new ifstream();
     stream->open(file, std::ifstream::binary);
     try {
         Parser parser(stream);
-        NodeBlock *block = parser.Parse();
+        Statement *block = parser.Parse();
+        parser.getSymbolsTable().print(false);
         block->print("");
     } catch (TokenException e) {
         e.print();
@@ -59,8 +51,6 @@ void startParser(char *file) {
         e.print();
     }
     stream->close();
-
-    changeOut("", false);
 }
 
 void printInfo() {
@@ -70,10 +60,12 @@ void printInfo() {
     printf("-la - Lexical analysis\n");
     printf("-sa - Syntax analysis\n");
     printf("-nologo - Do not print compiler info\n");
+    printf("-out - Print to file\n");
 }
 
 int main(int argc, char *argv[]) {
     int module = -1;
+    bool toFile = false;
     bool printLogo = true;
     char *file = 0;
     if (argc > 1) {
@@ -93,15 +85,9 @@ int main(int argc, char *argv[]) {
             } else if (string(argv[i]).compare("-nologo") == 0) {
                 printLogo = false;
             } else if (string(argv[i]).compare("-test") == 0) {
-                ifstream f("test.txt");
-                printf("%c\n",(char)f.get());
-                printf(f.eof() ? "true\n" : "false\n");
-                f.get();
-                printf(f.eof() ? "true\n" : "false\n");
-                f.unget();
-                f.get();
-                printf(f.eof() ? "true\n" : "false\n");
                 return 0;
+            } else if (string(argv[i]).compare("-out") == 0) {
+                toFile = true;
             } else {
                 file = argv[i];
             }
@@ -111,19 +97,25 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
-    switch (module) {
-        case 0:
-            if (printLogo)
-                printf("Pascal compiler by TheLocky version: %s\n", VERSION);
-            startTokenizer(file);
-            break;
-        case 1:
-            if (printLogo)
-                printf("Pascal compiler by TheLocky version: %s\n", VERSION);
-            startParser(file);
-            break;
-        default:
-            printInfo();
+    if (file != 0) {
+        changeOut(file, toFile);
+        switch (module) {
+            case 0:
+                if (printLogo)
+                    printf("Pascal compiler by TheLocky version: %s\n", VERSION);
+                startTokenizer(file);
+                break;
+            case 1:
+                if (printLogo)
+                    printf("Pascal compiler by TheLocky version: %s\n", VERSION);
+                startParser(file);
+                break;
+            default:
+                changeOut("", false);
+                printInfo();
+        }
+    } else {
+        printInfo();
     }
     return 0;
 }

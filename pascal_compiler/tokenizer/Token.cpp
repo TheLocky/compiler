@@ -53,6 +53,7 @@ int Token::getTokenType(LEX_TYPE lt) {
         case TK_CONTINUE:
         case TK_VAR:
         case TK_TYPE:
+        case TK_CONST:
         case TK_ARRAY:
         case TK_OF:
         case TK_AND:

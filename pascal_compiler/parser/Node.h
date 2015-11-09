@@ -6,23 +6,18 @@
 #define PASCAL_COMPILER_EXPRESSION_H
 
 #include "tokenizer/Tokenizer.h"
+#include "SymTable.h"
 
 class Node {
 protected:
     Token tk;
 public:
-    Node() : tk() { };
+    Symbols::Symbol *symbol;
 
-    virtual void print(string prefix);
-};
+    Node() : tk(), symbol(nullptr) { };
 
-class NodeBlock {
-private:
-    std::list<Node *> lines;
-public:
-    NodeBlock(std::list<Node *> lines) : lines(lines) {}
-
-    void print(string prefix);
+    Symbols::Symbol *getSymbol() { return symbol; }
+    virtual void print(string prefix) = 0;
 };
 
 class ExprBinary : public Node {
@@ -31,6 +26,7 @@ private:
     Node *right;
 public:
     ExprBinary(Token tk, Node *left, Node *right);
+    void setSymbol(Symbols::Symbol *);
 
     void print(string prefix);
 };
@@ -46,35 +42,35 @@ public:
 
 class NodeIntConst : public Node {
 public:
-    NodeIntConst(Token tk);
+    NodeIntConst(Token tk, Symbols::Symbol *symbol);
 
     void print(string prefix);
 };
 
 class NodeRealConst : public Node {
 public:
-    NodeRealConst(Token tk);
+    NodeRealConst(Token tk, Symbols::Symbol *symbol);
 
     void print(string prefix);
 };
 
 class NodeStringConst : public Node {
 public:
-    NodeStringConst(Token tk);
+    NodeStringConst(Token tk, Symbols::Symbol *symbol);
 
     void print(string prefix);
 };
 
 class NodeCharConst : public Node {
 public:
-    NodeCharConst(Token tk);
+    NodeCharConst(Token tk, Symbols::Symbol *symbol);
 
     void print(string prefix);
 };
 
 class NodeVariable : public Node {
 public:
-    NodeVariable(Token tk);
+    NodeVariable(Token tk, Symbols::Symbol *symbol);
 
     void print(string prefix);
 };
@@ -109,9 +105,11 @@ public:
     void print(string prefix);
 };
 
-class NodeCast : public NodeFunc {
+class NodeCast : public Node {
 public:
-    NodeCast(Node *parent, Node *parameter);
+    Node *parameter;
+
+    NodeCast(Symbols::Symbol *type, Node *parameter);
 
     void print(string prefix);
 };

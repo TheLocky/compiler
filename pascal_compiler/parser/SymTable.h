@@ -5,138 +5,224 @@
 #ifndef PASCAL_COMPILER_SYMTABLE_H
 #define PASCAL_COMPILER_SYMTABLE_H
 
+#include <typeinfo>
 #include <string>
 #include "tokenizer/Token.h"
 #include <unordered_map>
 #include "exception/Exception.h"
+#include <vector>
 
 using std::string;
 
-class Symbol {
-public:
-    string name;
-    Symbol(string name) : name(name){}
+namespace Symbols {
 
-    virtual string getType() = 0;
-    virtual void print() = 0;
-};
+    enum Type {
+        TypeInt = 0, TypeDouble, TypeChar, TypeString, TypeBool, TypeSubRange, TypePointer,
+        TypeArray, TypeConst, TypeVar, TypeAlias, TypeEnd
+    };
 
-class SymType : public Symbol {
-public:
-    SymType(string name) : Symbol(name){}
+    class SymTypeInt;
+    class SymTypeDouble;
+    class SymTypeChar;
+    class SymTypeString;
+    class SymTypeBool;
+    class SymTypeSubRange;
+    class SymTypePointer;
+    class SymTypeArray;
+    class SymArray;
+    class SymVar;
+    class SymConst;
+    class SymAlias;
 
-    virtual string getType() = 0;
-    virtual void print() = 0;
-};
+    class Symbol {
+    public:
+        Type typeId = TypeEnd;
+        string name;
 
-class SymVar : public Symbol {
-public:
-    SymType *type;
+        Symbol(string name) : name(name) { }
 
-    SymVar(string name, SymType *type) : Symbol(name), type(type) {}
+        virtual void print() = 0;
 
-    string getType();
-    virtual void print();
-};
+#define __is(x) inline bool is##x() { return typeId == Type##x; }
 
-class SymConst : public SymVar {
-private:
-    Token value;
-public:
-    SymConst(string name, SymType *type, Token value) : SymVar(name, type), value(value){}
+        __is(SubRange) __is(Pointer)  __is(Array) __is(Const) __is(Var) __is(Alias)
 
-    Token getValue() const;
-    string getType();
-    void print();
-};
+#define __to(x) inline Sym##x *to##x() { return (Sym##x *) this; }
+#define __toType(x) inline SymType##x *to##x() { return (SymType##x *) this; }
 
-class SymTypeInt : public SymType {
-public:
-    SymTypeInt(string name) : SymType(name){}
+        __toType(SubRange) __toType(Pointer) __to(Array) __to(Const) __to(Var) __to(Alias)
+    };
 
-    string getType() { return "Integer"; }
-    void print() { printf("%s = system integer", name.c_str()); }
-};
+    class SymType : public Symbol {
+    public:
+        SymType(string name) : Symbol(name) { }
 
-class SymTypeDouble : public SymType {
-public:
-    SymTypeDouble(string name) : SymType(name){}
+        virtual Type getTypeId() { return typeId; };
 
-    string getType() { return "Double"; }
-    void print() { printf("%s = system double", name.c_str()); }
-};
+        virtual string getTypeStr() = 0;
 
-class SymTypeChar : public SymType {
-public:
-    SymTypeChar(string name) : SymType(name){}
+        virtual void print() = 0;
+    };
 
-    string getType() { return "Char"; }
-    void print() { printf("%s = system char", name.c_str()); }
-};
+    class SymVar : public Symbol {
+    public:
+        SymType *type;
 
-class SymTypeString : public SymType {
-public:
-    SymTypeString(string name) : SymType(name){}
+        SymVar(string name, SymType *type) : Symbol(name), type(type) {
+            Symbol::typeId = TypeVar;
+        }
 
-    string getType() { return "String"; }
-    void print() { printf("%s = system string", name.c_str()); }
-};
+        virtual Type getTypeId() { return typeId; };
 
-class SymTypeSubRange : public SymType {
-private:
-    SymConst *left, *right;
-public:
-    SymTypeSubRange(string name, SymConst *left, SymConst *right) :
-            SymType(name), left(left), right(right) {}
+        virtual string getTypeStr();
 
-    string getType();
-    void print();
-};
+        virtual void print();
+    };
 
-class SymTypePointer : public SymType {
-private:
-    SymType *baseType;
-public:
-    SymTypePointer(string name, SymType *baseType) : SymType(name), baseType(baseType) {}
+    class SymConst : public SymVar {
+    public:
+        Token value;
 
-    string getType();
-    void print();
-};
+        SymConst(string name, SymType *type, Token value) : SymVar(name, type), value(value) {
+            SymVar::typeId = TypeConst;
+        }
 
-class SymArray : public SymType {
-private:
-    SymType *arrayType;
-    SymType *indexType;
-    bool dynamic;
-public:
-    SymArray(string name, SymType *arrType, SymType *idxType, bool dynamic) : SymType(name),
-             arrayType(arrType), indexType(idxType), dynamic(dynamic){}
+        string getTypeStr();
 
-    string getType();
-    void print();
-};
+        void print();
+    };
 
-class SymAlias : public SymType {
-private:
-    SymType *type;
-public:
-    SymAlias(string name, SymType *type) : SymType(name), type(type){}
+    class SymTypeInt : public SymType {
+    public:
+        SymTypeInt(string name) : SymType(name) {
+            Symbol::typeId = TypeInt;
+        }
 
-    string getType();
-    void print();
-};
+        string getTypeStr() { return "Integer"; }
+
+        void print() { printf("%s = system integer", name.c_str()); }
+    };
+
+    class SymTypeDouble : public SymType {
+    public:
+        SymTypeDouble(string name) : SymType(name) {
+            Symbol::typeId = TypeDouble;
+        }
+
+        string getTypeStr() { return "Double"; }
+
+        void print() { printf("%s = system double", name.c_str()); }
+    };
+
+    class SymTypeChar : public SymType {
+    public:
+        SymTypeChar(string name) : SymType(name) {
+            Symbol::typeId = TypeChar;
+        }
+
+        string getTypeStr() { return "Char"; }
+
+        void print() { printf("%s = system char", name.c_str()); }
+    };
+
+    class SymTypeString : public SymType {
+    public:
+        SymTypeString(string name) : SymType(name) {
+            Symbol::typeId = TypeString;
+        }
+
+        string getTypeStr() { return "String"; }
+
+        void print() { printf("%s = system string", name.c_str()); }
+    };
+
+    class SymTypeBool : public SymType {
+    public:
+        SymTypeBool(string name) : SymType(name) {
+            Symbol::typeId = TypeBool;
+        }
+
+        string getTypeStr() { return "Bool"; }
+
+        void print() { printf("%s = system bool", name.c_str()); }
+    };
+
+    class SymTypeSubRange : public SymType {
+    public:
+        SymConst *left, *right;
+
+        SymTypeSubRange(string name, SymConst *left, SymConst *right) :
+                SymType(name), left(left), right(right) {
+            Symbol::typeId = TypeSubRange;
+        }
+
+        string getTypeStr();
+
+        void print();
+    };
+
+    class SymTypePointer : public SymType {
+    public:
+        SymType *baseType;
+
+        SymTypePointer(string name, SymType *baseType) : SymType(name), baseType(baseType) {
+            Symbol::typeId = TypePointer;
+        }
+
+        string getTypeStr();
+
+        void print();
+    };
+
+    class SymArray : public SymType {
+    public:
+        SymType *arrayType;
+        SymType *indexType;
+        bool dynamic;
+
+        SymArray(string name, SymType *arrType, SymType *idxType, bool dynamic) :
+                SymType(name), arrayType(arrType), indexType(idxType), dynamic(dynamic) {
+            Symbol::typeId = TypeArray;
+        }
+
+        string getTypeStr();
+
+        void print();
+    };
+
+    class SymAlias : public SymType {
+    public:
+        SymType *type;
+
+        SymAlias(string name, SymType *type) : SymType(name), type(type) {
+            Symbol::typeId = TypeAlias;
+        }
+
+        string getTypeStr();
+
+        void print();
+    };
+}
 
 class SymTable {
 private:
-    std::unordered_map<string, Symbol *> symbols;
+    std::unordered_map<string, Symbols::SymType *> typeSymbols;
+    std::unordered_map<string, Symbols::SymVar *> varSymbols;
     int anon_count;
 
 public:
     SymTable();
 
-    void addSymbol(Symbol *symbol);
-    bool contains(string name);
-    Symbol *getSymbol(string name);
+    void addTypeSymbol(Symbols::SymType *symbol);
+    void addVarSymbol(Symbols::SymVar *symbol);
+    bool containsType(string name);
+    bool containsVar(string name);
+    Symbols::SymType *getTypeSymbol(string name);
+    Symbols::SymVar *getVarSymbol(string name);
+
+    static bool compareTypes(Symbols::Symbol *one, Symbols::Symbol *two);
+    static bool compareTypes(Symbols::Symbol *one, Symbols::Type type);
+    static bool compareTypes(Symbols::Symbol *one, std::vector<Symbols::Type> typeList);
 
     void print(bool printSystem);
 };

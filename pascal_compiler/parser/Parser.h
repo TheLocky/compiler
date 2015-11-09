@@ -9,6 +9,9 @@
 #include "Node.h"
 #include "exception/Exception.h"
 #include "SymTable.h"
+#include "Statement.h"
+
+using namespace Symbols;
 
 class Parser {
 private:
@@ -18,23 +21,33 @@ private:
     inline void thExpectedExpr(Node *node);
     void requireToken(LEX_TYPE tok, string tokStr);
 
+    void ParseTypeBlock();
+    SymType *ParseType(string name, bool createAlias);
+    SymArray *ParseTypeArray(string name);
+    SymConst *ParseConstantExpr(string name, std::list<LEX_TYPE> allowTypes);
+    SymTypeSubRange *ParseTypeSubRange(string name);
+    void ParseConstBlock();
+    void ParseVarBlock();
+    std::vector<Token> ParseIdentList();
+
+    NodeCast *createCast(Node *left, Node *right, bool *leftUsed);
+    NodeCast *createCast(Node *left, Node *right, bool *leftUsed, string err);
+    NodeCast *createCast(Symbol *type, Node *right);
+    NodeCast *createCast(Symbol *type, Node *right, string err);
+
+    void ParseDeclSection();
+    Statement *ParseStatement(Statement *parent = nullptr);
+    Statement *ParseStmtCompound(Statement *parent = nullptr);
+
     std::vector<Node*> ParseParameters();
     Node *ParseDesignator();
-    Node *ParseAssign();
+    Node *ParseAssign(bool mustBe = false);
     Node *ParseBinary(int level);
     Node *ParseFactor();
 
-    NodeBlock *ParseBlock();
-    //type decl
-    void ParseTypeBlock();
-    SymType *ParseType(string name);
-    SymConst *ParseConstantExpr(string name, std::list<LEX_TYPE> allowTypes);
-    SymTypeSubRange *ParseTypeSubRange(string name);
-
-
 public:
     Parser(ifstream *file) : tokenizer(file) {}
-    NodeBlock *Parse();
+    Statement *Parse();
     SymTable getSymbolsTable() const;
 };
 
