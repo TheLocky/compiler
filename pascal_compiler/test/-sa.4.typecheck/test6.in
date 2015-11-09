@@ -1,0 +1,7 @@
+type
+	Real = Double;
+var
+	a : Real;
+begin
+	a := 3.4;
+end.

@@ -1,0 +1,7 @@
+var
+	a: Char;
+	b,c: Integer;
+	d: Double;
+	f: String;
+begin
+end.

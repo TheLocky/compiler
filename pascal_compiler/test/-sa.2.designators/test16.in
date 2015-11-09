@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+func(1);
+end.

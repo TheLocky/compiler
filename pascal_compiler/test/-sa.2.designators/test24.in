@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+arr[rec.c][func(b)];
+end.

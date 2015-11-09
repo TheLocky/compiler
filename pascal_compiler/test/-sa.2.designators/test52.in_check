@@ -1,0 +1,9 @@
+====== BEGIN BLOCK:
+		a
+	>=
+		c
+and
+		b
+	<
+		d
+====== END BLOCK

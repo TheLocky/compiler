@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+calc(i,j) - func(a[i,j],0);
+end.

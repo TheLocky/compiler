@@ -1,0 +1,17 @@
+program project1;
+var q,n,alive : Int64;
+  t: Text;
+//comment
+begin
+  Assign (t,'input.txt') ;
+  Reset (t);
+  read (t,n,q);
+  Close(t);
+  alive:=q*n;
+  while alive>n do
+   alive:=alive-n+((alive-n-1) div(q-1));
+  Assign(t,'output.txt');
+  Rewrite(t);
+  Writeln(t,alive);
+  Close(t);
+end.

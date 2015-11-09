@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+arr[i,j];
+end.

@@ -1,0 +1,10 @@
+type
+	myChar = Char;
+	errCode = '1'..'5';                  
+	states = Array[myChar] of errCode;
+const
+	noError	= '1';
+var
+	statesArr: states;
+begin
+end.

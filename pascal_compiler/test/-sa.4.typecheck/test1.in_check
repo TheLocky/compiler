@@ -1,0 +1,9 @@
+====== SYMBOLS TABLE: 
+Var a is Integer
+====== END TABLE
+
+====== BEGIN BLOCK:
+		a
+	:=
+		10
+====== END BLOCK

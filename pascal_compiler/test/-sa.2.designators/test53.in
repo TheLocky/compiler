@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+b >= (a - 3);
+end.

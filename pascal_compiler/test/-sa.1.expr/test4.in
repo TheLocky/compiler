@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+ident + 4 * (5.5 - 3);
+end.

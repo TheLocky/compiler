@@ -1,0 +1,5 @@
+var
+	ch : Char;
+begin
+	ch := 'A';
+end.

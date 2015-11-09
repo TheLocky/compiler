@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+arr1[i*arr[2]];
+end.

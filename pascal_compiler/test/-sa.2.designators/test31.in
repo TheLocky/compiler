@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+arr[func(rec.mas[1])];
+end.

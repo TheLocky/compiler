@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+rec.a.b.c;
+end.

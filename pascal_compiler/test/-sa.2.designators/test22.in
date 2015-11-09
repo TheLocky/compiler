@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+arr[func(a,b),func(c,d)];
+end.

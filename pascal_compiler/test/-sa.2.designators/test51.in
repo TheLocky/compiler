@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+bool := a < 2;
+end.

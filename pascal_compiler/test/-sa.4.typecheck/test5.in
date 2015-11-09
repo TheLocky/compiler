@@ -1,0 +1,10 @@
+type
+	errors = 1..100;
+	errList = Array[Char] of errors;
+const
+	noError = 1;
+var
+	err : errList;
+begin
+	err['A'] := noError;
+end.

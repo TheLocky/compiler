@@ -1,0 +1,4 @@
+type 
+	a = Char;
+begin
+end.

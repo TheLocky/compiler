@@ -1,0 +1,42 @@
+program project1;
+ 
+uses math;
+ 
+const MaxPrise=1000;
+var t :Text;
+    ClassCount,i,ConditionerCount,Power,Prise,Reply : Integer;
+    MinPower : Array of Integer;
+    PowerPrise : Array [1..MaxPrise] of Integer;
+ 
+begin
+  Reply:=0;
+  for i:=1 to MaxPrise do
+    PowerPrise[i]:=MaxPrise;
+ 
+  Assign (t,'cond.in');
+  Reset(t);
+  Readln (t,ClassCount);
+  SetLength(MinPower,ClassCount);
+  For i:=0 to High(MinPower) do
+    Read(t,MinPower[i]);
+  ReadLn (t);
+  Readln (t,ConditionerCount);
+  For i:=1 to ConditionerCount do Begin
+    Read(t,Power);
+    Readln(t,Prise);
+    if PowerPrise[Power]>Prise then
+      PowerPrise[Power]:=Prise;
+  End;
+  Close(t);
+ 
+  For i:=MaxPrise-1 downto 1 do Begin
+    PowerPrise[i]:=min(PowerPrise[i+1],PowerPrise[i]);
+  End;
+  For i:=0 to High(MinPower) do Begin
+    Reply+=PowerPrise[MinPower[i]];
+  End;
+  Assign(t,'cond.out');
+  Rewrite(t);
+  WriteLn(t,Reply);
+  Close(t);
+End.

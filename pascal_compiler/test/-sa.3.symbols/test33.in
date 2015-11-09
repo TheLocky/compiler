@@ -1,0 +1,4 @@
+var
+	a : Array[1] of Integer;
+begin
+end.

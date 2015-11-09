@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+rec.arr[i,j][k];
+end.

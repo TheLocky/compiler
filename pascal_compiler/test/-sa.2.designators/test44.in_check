@@ -1,0 +1,15 @@
+====== BEGIN BLOCK:
+	a
+:=
+				func
+			( )
+				b
+		+
+				arr
+			[ ]
+				c
+	+
+			rec
+		.
+			d
+====== END BLOCK

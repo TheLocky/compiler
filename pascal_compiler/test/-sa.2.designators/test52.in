@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+(a >= c) and (b < d);
+end.

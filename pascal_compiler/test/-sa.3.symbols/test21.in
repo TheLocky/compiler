@@ -1,0 +1,4 @@
+type
+	a = a;
+begin
+end.

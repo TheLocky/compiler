@@ -1,0 +1,5 @@
+type
+	a = Array of Integer;
+	b = a;
+begin
+end.

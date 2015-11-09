@@ -1,0 +1,8 @@
+type
+	ta = Array[Char] of Array of Integer; 
+var
+	a : Array[Char] of Array of Integer;
+	b : Array[1..10] of Array[Char] of Double;
+	c : ta;
+begin
+end.

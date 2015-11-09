@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+func(func(a),b);
+end.

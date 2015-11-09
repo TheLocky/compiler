@@ -1,0 +1,14 @@
+====== SYMBOLS TABLE: 
+errList is Array of SubRange of Integer with index type Char
+errors is Integer SubRange = 1..100
+Var err is Array[Char] of SubRange of Integer
+Const Var noError is Integer = 1
+====== END TABLE
+
+====== BEGIN BLOCK:
+			err
+		[ ]
+			65
+	:=
+		noError
+====== END BLOCK

@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+func(rec.a + arr[10] * func(d) + c);
+end.

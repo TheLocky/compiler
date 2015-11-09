@@ -1,0 +1,10 @@
+====== SYMBOLS TABLE: 
+Var f is String
+Var d is Double
+Var c is Integer
+Var b is Integer
+Var a is Char
+====== END TABLE
+
+====== BEGIN BLOCK:
+====== END BLOCK

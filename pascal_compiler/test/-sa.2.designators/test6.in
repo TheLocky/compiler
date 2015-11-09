@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+arr1[i] + arr2[j] + arr3[k];
+end.

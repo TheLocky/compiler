@@ -1,0 +1,4 @@
+type
+	a = Array[1..10] of String;
+begin
+end.

@@ -1,0 +1,10 @@
+====== SYMBOLS TABLE: 
+states is Array of SubRange of Char with index type Alias of Char
+errCode is Char SubRange = 49..53
+myChar is Alias of Char
+Var statesArr is Array[Alias of Char] of SubRange of Char
+Const Var noError is Char = 49
+====== END TABLE
+
+====== BEGIN BLOCK:
+====== END BLOCK

@@ -1,0 +1,6 @@
+var
+	a : String;
+	b : Char;
+begin
+	a := b;
+end.

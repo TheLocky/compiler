@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+a * b * (c * d);
+end.

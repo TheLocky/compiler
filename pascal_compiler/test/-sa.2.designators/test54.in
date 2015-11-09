@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+func(a:=c<d) ;
+end.

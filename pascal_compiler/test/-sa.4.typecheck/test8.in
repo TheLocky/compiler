@@ -1,0 +1,5 @@
+var
+	a : String;
+begin
+	a := 10;
+end.

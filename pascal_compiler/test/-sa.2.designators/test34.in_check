@@ -1,0 +1,15 @@
+====== BEGIN BLOCK:
+		calc
+	( )
+		i
+		j
+-
+		func
+	( )
+				a
+			[ ]
+				i
+		[ ]
+			j
+		0
+====== END BLOCK

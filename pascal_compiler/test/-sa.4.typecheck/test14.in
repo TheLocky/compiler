@@ -1,0 +1,7 @@
+var
+	a : String;
+	b : Double;
+begin
+	b := 1.5;
+	a := b;
+end.

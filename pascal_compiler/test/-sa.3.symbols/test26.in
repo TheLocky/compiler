@@ -1,0 +1,5 @@
+type
+	real = Double;
+	arr = Array[real] of Double;
+begin
+end.

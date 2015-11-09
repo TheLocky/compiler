@@ -1,0 +1,13 @@
+====== BEGIN BLOCK:
+		arr
+	[ ]
+			func
+		( )
+			a
+			b
+[ ]
+		func
+	( )
+		c
+		d
+====== END BLOCK

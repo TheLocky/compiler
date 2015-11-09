@@ -1,0 +1,5 @@
+var
+	a : Char;
+begin
+	a[0] := 3;
+end.

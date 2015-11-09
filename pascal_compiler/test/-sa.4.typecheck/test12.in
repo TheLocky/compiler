@@ -1,0 +1,6 @@
+var
+	a : Integer;
+	b : Char;
+begin
+	a := b;
+end.

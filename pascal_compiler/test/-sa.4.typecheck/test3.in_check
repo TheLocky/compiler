@@ -1,0 +1,11 @@
+====== SYMBOLS TABLE: 
+Var a is Array[Char] of Integer
+====== END TABLE
+
+====== BEGIN BLOCK:
+			a
+		[ ]
+			(Char)	10
+	:=
+		10
+====== END BLOCK

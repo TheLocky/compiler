@@ -1,0 +1,23 @@
+====== BEGIN BLOCK:
+	func
+( )
+				rec
+			.
+				mas
+		[ ]
+			i
+	[ ]
+			calc
+		( )
+				1
+			+
+				3
+				rec
+			.
+				count
+			rec
+		.
+			val
+	[ ]
+		i
+====== END BLOCK

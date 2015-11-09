@@ -1,0 +1,4 @@
+type
+	a = Array of b;
+begin
+end.

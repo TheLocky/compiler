@@ -1,0 +1,10 @@
+====== BEGIN BLOCK:
+	func
+( )
+		+
+			a
+	+
+			func
+		( )
+			c
+====== END BLOCK

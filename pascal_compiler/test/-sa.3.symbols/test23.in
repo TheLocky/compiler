@@ -1,0 +1,4 @@
+type
+	a = Array[b] of Integer;
+begin
+end.

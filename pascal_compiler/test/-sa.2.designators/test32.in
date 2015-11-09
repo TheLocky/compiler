@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+func(rec.mas[i][calc(1+3,rec.count)],rec.val[i]);
+end.

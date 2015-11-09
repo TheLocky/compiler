@@ -1,0 +1,4 @@
+skipTypeCheck
+begin
+a := func(b) + arr[c] + rec.d;
+end.
