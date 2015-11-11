@@ -1,7 +1,7 @@
 ====== BEGIN BLOCK:
-	func
-( )
-		rec
-	.
-		a
+		func
+	( )
+			rec
+		.
+			a
 ====== END BLOCK

@@ -1,9 +1,9 @@
 ====== BEGIN BLOCK:
-		a
-	>=
-		c
-and
-		b
-	<
-		d
+			a
+		>=
+			c
+	and
+			b
+		<
+			d
 ====== END BLOCK

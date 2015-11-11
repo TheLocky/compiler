@@ -1,5 +1,5 @@
 ====== BEGIN BLOCK:
-	a
-:=
-	b
+		a
+	:=
+		b
 ====== END BLOCK

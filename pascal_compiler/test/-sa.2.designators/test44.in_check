@@ -1,15 +1,15 @@
 ====== BEGIN BLOCK:
-	a
-:=
-				func
-			( )
-				b
+		a
+	:=
+					func
+				( )
+					b
+			+
+					arr
+				[ ]
+					c
 		+
-				arr
-			[ ]
-				c
-	+
-			rec
-		.
-			d
+				rec
+			.
+				d
 ====== END BLOCK

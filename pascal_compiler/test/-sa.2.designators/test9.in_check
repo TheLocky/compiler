@@ -1,11 +1,11 @@
 ====== BEGIN BLOCK:
-			a
+				a
+			[ ]
+				b
 		[ ]
-			b
+				c
+			[ ]
+				d
 	[ ]
-			c
-		[ ]
-			d
-[ ]
-	i
+		i
 ====== END BLOCK

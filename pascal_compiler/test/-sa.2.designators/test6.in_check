@@ -1,13 +1,13 @@
 ====== BEGIN BLOCK:
-			arr1
-		[ ]
-			i
+				arr1
+			[ ]
+				i
+		+
+				arr2
+			[ ]
+				j
 	+
-			arr2
+			arr3
 		[ ]
-			j
-+
-		arr3
-	[ ]
-		k
+			k
 ====== END BLOCK

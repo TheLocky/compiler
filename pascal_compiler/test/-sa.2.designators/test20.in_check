@@ -1,10 +1,10 @@
 ====== BEGIN BLOCK:
-	func
-( )
+		func
+	( )
+			+
+				a
 		+
-			a
-	+
-			func
-		( )
-			c
+				func
+			( )
+				c
 ====== END BLOCK

@@ -1,9 +1,9 @@
 ====== BEGIN BLOCK:
-			rec
+				rec
+			.
+				a
 		.
-			a
+			b
 	.
-		b
-.
-	c
+		c
 ====== END BLOCK

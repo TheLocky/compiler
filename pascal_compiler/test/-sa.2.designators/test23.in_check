@@ -1,7 +1,7 @@
 ====== BEGIN BLOCK:
-	arr
-[ ]
-		rec
-	.
-		c
+		arr
+	[ ]
+			rec
+		.
+			c
 ====== END BLOCK

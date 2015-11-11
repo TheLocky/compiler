@@ -1,11 +1,11 @@
 ====== BEGIN BLOCK:
-		arr
+			arr
+		[ ]
+				rec
+			.
+				c
 	[ ]
-			rec
-		.
-			c
-[ ]
-		func
-	( )
-		b
+			func
+		( )
+			b
 ====== END BLOCK

@@ -1,6 +1,6 @@
 ====== BEGIN BLOCK:
-	^
-		rec
-.
-	a
+		^
+			rec
+	.
+		a
 ====== END BLOCK

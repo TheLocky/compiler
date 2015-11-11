@@ -1,9 +1,9 @@
 ====== BEGIN BLOCK:
-	arr1
-[ ]
-		i
-	*
-			arr
-		[ ]
-			2
+		arr1
+	[ ]
+			i
+		*
+				arr
+			[ ]
+				2
 ====== END BLOCK

@@ -1,9 +1,9 @@
 ====== BEGIN BLOCK:
-			a
-		[ ]
-			b
-	.
-		c
-( )
-	d
+				a
+			[ ]
+				b
+		.
+			c
+	( )
+		d
 ====== END BLOCK

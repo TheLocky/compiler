@@ -1,8 +1,8 @@
 ====== BEGIN BLOCK:
-	func
-( )
 		func
 	( )
-		a
-	b
+			func
+		( )
+			a
+		b
 ====== END BLOCK
