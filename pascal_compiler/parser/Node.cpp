@@ -4,166 +4,141 @@
 
 #include "Node.h"
 
-ExprBinary::ExprBinary(Token tk, Node * left, Node * right) {
-    Node::tk = tk;
+ExprBinary::ExprBinary(Token tk, NodeExpr * left, NodeExpr * right) {
+    operatorToken = tk;
     this->left = left;
     this->right = right;
-    Node::symbol = left->symbol;
+    type = left->type;
 }
 
-void ExprBinary::setSymbol(Symbols::Symbol *symbol) {
-    Node::symbol = symbol;
-}
-
-ExprUnary::ExprUnary(Token tk, Node *right) {
-    Node::tk = tk;
+ExprUnary::ExprUnary(Token tk, NodeExpr *right) {
+    operatorToken = tk;
     this->right = right;
-    Node::symbol = right->symbol;
+    type = right->type;
 }
 
-NodeIntConst::NodeIntConst(Token tk, Symbols::Symbol *symbol) {
-    Node::tk = tk;
-    Node::symbol = symbol;
+NodeIntConst::NodeIntConst(Token tk, Symbols::SymType *symbol) {
+    operatorToken = tk;
+    type = symbol;
 }
 
-NodeRealConst::NodeRealConst(Token tk, Symbols::Symbol *symbol) {
-    Node::tk = tk;
-    Node::symbol = symbol;
+ExprRealConst::ExprRealConst(Token tk, Symbols::SymType *symbol) {
+    operatorToken = tk;
+    type = symbol;
 }
 
-NodeStringConst::NodeStringConst(Token tk, Symbols::Symbol *symbol) {
-    Node::tk = tk;
-    Node::symbol = symbol;
+ExprStringConst::ExprStringConst(Token tk, Symbols::SymType *symbol) {
+    operatorToken = tk;
+    type = symbol;
 }
 
-NodeCharConst::NodeCharConst(Token tk, Symbols::Symbol *symbol) {
-    Node::tk = tk;
-    Node::symbol = symbol;
+ExprCharConst::ExprCharConst(Token tk, Symbols::SymType *symbol) {
+    operatorToken = tk;
+    type = symbol;
 }
 
-NodeVariable::NodeVariable(Token tk, Symbols::Symbol *symbol) {
-    Node::tk = tk;
-    Node::symbol = symbol;
+ExprVariable::ExprVariable(Token tk, Symbols::SymType *varType) {
+    operatorToken = tk;
+    type = varType;
 }
 
-void ExprBinary::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        if (left != NULL)
-            left->print(prefix + "\t");
-        printf("%s%s\n", prefix.c_str(), tk.text.c_str());
-        if (right != NULL)
-            right->print(prefix + "\t");
-    }
-}
-
-void ExprUnary::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        printf("%s%s\n", prefix.c_str(), tk.text.c_str());
-        if (right != NULL)
-            right->print(prefix + "\t");
-    }
-}
-
-void NodeIntConst::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        printf("%s%s\n", prefix.c_str(), tk.getStr().c_str());
-    }
-}
-
-void NodeRealConst::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        printf("%s%s\n", prefix.c_str(), tk.getStr().c_str());
-    }
-}
-
-void NodeStringConst::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        printf("%s%s\n", prefix.c_str(), tk.getStr().c_str());
-    }
-}
-
-void NodeCharConst::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        printf("%s%s\n", prefix.c_str(), tk.getStr().c_str());
-    }
-}
-
-void NodeVariable::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        printf("%s%s\n", prefix.c_str(), tk.text.c_str());
-    }
-}
-
-NodeArrayIndex::NodeArrayIndex(Node *parent, Node *child) {
-    tk.tokenType = TK_LSQB;
+NodeArrayIndex::NodeArrayIndex(NodeExpr *parent, NodeExpr *child, Symbols::SymType *arrType) {
+    operatorToken.tokenType = TK_LSQB;
     this->parent = parent;
     this->child = child;
-    Node::symbol = parent->symbol;
+    type = arrType;
 }
 
-NodeRecordAccess::NodeRecordAccess(Node *left, Node *right) {
-    tk.tokenType = TK_POINT;
+NodeRecordAccess::NodeRecordAccess(NodeExpr *left, NodeExpr *right) {
+    operatorToken.tokenType = TK_POINT;
     this->left = left;
     this->right = right;
+    type = right->type;
 }
 
-NodeFunc::NodeFunc(Node *parent, std::vector<Node*> params) {
-    tk.tokenType = TK_LB;
+NodeFunc::NodeFunc(NodeExpr *parent, std::vector<NodeExpr*> params, Symbols::SymType *retType) {
+    operatorToken.tokenType = TK_LB;
     this->parent = parent;
     this->params = params;
+    type = retType;
 }
 
-NodeCast::NodeCast(Symbols::Symbol *type, Node *parameter) : parameter(parameter) {
-    Node::symbol = type;
+NodeCast::NodeCast(NodeExpr *parameter, Symbols::SymType *castType) : parameter(parameter) {
+    type = castType;
 }
 
-NodeAssign::NodeAssign(Node *left, Node *right) {
-    tk.tokenType = TK_ASSIGN;
+NodeAssign::NodeAssign(NodeExpr *left, NodeExpr *right) {
     this->left = left;
     this->right = right;
 }
 
 void NodeArrayIndex::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        if (parent != NULL)
-            parent->print(prefix + "\t");
-        printf("%s%s\n", prefix.c_str(), "[ ]");
-        if (child != NULL)
-            child->print(prefix + "\t");
-    }
+    if (parent != NULL)
+        parent->print(prefix + "\t");
+    printf("%s%s\n", prefix.c_str(), "[ ]");
+    if (child != NULL)
+        child->print(prefix + "\t");
 }
 
 void NodeRecordAccess::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        if (left != NULL)
-            left->print(prefix + "\t");
-        printf("%s%s\n", prefix.c_str(), ".");
-        if (right != NULL)
-            right->print(prefix + "\t");
-    }
+    if (left != NULL)
+        left->print(prefix + "\t");
+    printf("%s%s\n", prefix.c_str(), ".");
+    if (right != NULL)
+        right->print(prefix + "\t");
 }
 
 void NodeFunc::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        if (parent != NULL)
-            parent->print(prefix + "\t");
-        printf("%s%s\n", prefix.c_str(), "( )");
-        for (auto i = params.begin(); i != params.end(); i++)
-            (*i)->print(prefix + "\t");
-    }
+    if (parent != NULL)
+        parent->print(prefix + "\t");
+    printf("%s%s\n", prefix.c_str(), "( )");
+    for (auto i = params.begin(); i != params.end(); i++)
+        (*i)->print(prefix + "\t");
 }
 
 void NodeCast::print(string prefix) {
-        if (parameter != NULL)
-            parameter->print(prefix + "(" + symbol->name.c_str() + ")" + "\t");
+    if (parameter != NULL)
+        parameter->print(prefix + "(" + type->name.c_str() + ")" + "\t");
 }
 
 void NodeAssign::print(string prefix) {
-    if (tk.tokenType != TK_ERROR) {
-        if (left != NULL)
-            left->print(prefix + "\t");
-        printf("%s%s\n", prefix.c_str(), ":=");
-        if (right != NULL)
-            right->print(prefix + "\t");
-    }
+    if (left != NULL)
+        left->print(prefix + "\t");
+    printf("%s%s\n", prefix.c_str(), ":=");
+    if (right != NULL)
+        right->print(prefix + "\t");
+}
+
+void ExprBinary::print(string prefix) {
+    if (left != NULL)
+        left->print(prefix + "\t");
+    printf("%s%s\n", prefix.c_str(), operatorToken.text.c_str());
+    if (right != NULL)
+        right->print(prefix + "\t");
+}
+
+void ExprUnary::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.text.c_str());
+    if (right != NULL)
+        right->print(prefix + "\t");
+}
+
+void NodeIntConst::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
+}
+
+void ExprRealConst::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
+}
+
+void ExprStringConst::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
+}
+
+void ExprCharConst::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
+}
+
+void ExprVariable::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.text.c_str());
 }

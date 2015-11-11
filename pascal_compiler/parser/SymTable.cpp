@@ -6,12 +6,12 @@
 
 using namespace Symbols;
 
-void SymTable::addTypeSymbol(SymType *symbol) {
+void SymTable::addType(SymType *symbol) {
     string name = containsType(symbol->name) ? symbol->name + std::to_string(++anon_count) : symbol->name;
     typeSymbols[name] = symbol;
 }
 
-void SymTable::addVarSymbol(SymVar *symbol) {
+void SymTable::addSymbol(SymVar *symbol) {
     varSymbols[symbol->name] = symbol;
 }
 
@@ -19,19 +19,19 @@ bool SymTable::containsType(string name) {
     return typeSymbols.find(name) != typeSymbols.end();
 }
 
-bool SymTable::containsVar(string name) {
+bool SymTable::contains(string name) {
     return varSymbols.find(name) != varSymbols.end();
 }
 
-SymType *SymTable::getTypeSymbol(string name) {
+SymType *SymTable::getType(string name) {
     if (containsType(name))
         return typeSymbols[name];
     else
         return nullptr;
 }
 
-SymVar *SymTable::getVarSymbol(string name) {
-    if (containsVar(name))
+SymVar *SymTable::getSymbol(string name) {
+    if (contains(name))
         return varSymbols[name];
     else
         return nullptr;
@@ -39,11 +39,11 @@ SymVar *SymTable::getVarSymbol(string name) {
 
 SymTable::SymTable() {
     anon_count = 0;
-    addTypeSymbol(new SymTypeInt("Integer"));
-    addTypeSymbol(new SymTypeChar("Char"));
-    addTypeSymbol(new SymTypeDouble("Double"));
-    addTypeSymbol(new SymTypeString("String"));
-    addTypeSymbol(new SymTypeBool("Bool"));
+    addType(new SymTypeInt(TYPENAME_INT));
+    addType(new SymTypeChar(TYPENAME_CHAR));
+    addType(new SymTypeDouble(TYPENAME_DOUBLE));
+    addType(new SymTypeString(TYPENAME_STRING));
+    addType(new SymTypeBool(TYPENAME_BOOLEAN));
 }
 
 string SymVar::getTypeStr() {
@@ -104,11 +104,8 @@ void SymTable::print(bool printSystem) {
         printf("====== SYMBOLS TABLE: \n");
         for (auto s : typeSymbols) {
             SymType *type = (SymType *) s.second;
-            if ((type->name != "Integer"
-                && type->name != "Char"
-                && type->name != "String"
-                && type->name != "Double"
-                && type->name != "Bool") || printSystem) {
+            if ((type->name != TYPENAME_INT && type->name != TYPENAME_CHAR && type->name != TYPENAME_STRING
+                && type->name != TYPENAME_DOUBLE && type->name != TYPENAME_BOOLEAN) || printSystem) {
                 type->print();
                 printf("\n");
             }
@@ -120,44 +117,4 @@ void SymTable::print(bool printSystem) {
         }
         printf("====== END TABLE\n\n");
     }
-}
-
-bool SymTable::compareTypes(Symbols::Symbol *one, Symbols::Symbol *two) {
-    while (one->isAlias()) one = one->toAlias()->type;
-    while (two->isAlias()) two = two->toAlias()->type;
-    if (one->isConst()) one = one->toConst()->type;
-    if (two->isConst()) two = two->toConst()->type;
-    if (one->isVar()) one = one->toVar()->type;
-    if (two->isVar()) two = two->toVar()->type;
-
-    if (one->typeId <= TypeBool && two->typeId <= TypeBool)
-        return one->typeId == two->typeId;
-    else if (one->isArray() && two->isArray())
-        return compareTypes(one->toArray()->indexType, two->toArray()->indexType) &&
-               compareTypes(one->toArray()->arrayType, two->toArray()->arrayType);
-    else if (one->isPointer() && two->isPointer())
-        return compareTypes(one->toPointer()->baseType, two->toPointer()->baseType);
-    else if (one->isSubRange() && two->isSubRange())
-        return compareTypes(one->toSubRange()->left->type, two->toSubRange()->left->type);
-
-    return false;
-}
-
-bool SymTable::compareTypes(Symbols::Symbol *one, Symbols::Type type) {
-    while (one->isAlias()) one = one->toAlias()->type;
-    if (one->isConst()) one = one->toConst()->type;
-    if (one->isVar()) one = one->toVar()->type;
-
-    if (one->typeId <= TypeBool && type <= TypeBool)
-        return one->typeId == type;
-    else if (one->isSubRange())
-        return compareTypes(one->toSubRange()->left->type, type);
-    return false;
-}
-
-bool SymTable::compareTypes(Symbols::Symbol *one, std::vector<Symbols::Type> typeList) {
-    for (auto type : typeList)
-        if (compareTypes(one, type))
-            return true;
-    return false;
 }

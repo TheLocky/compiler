@@ -21,6 +21,16 @@ private:
     inline void thExpectedExpr(Node *node);
     void requireToken(LEX_TYPE tok, string tokStr);
 
+    void ParseDeclarationSection();
+    Statement *ParseStatement(Statement *parent = nullptr);
+    Statement *ParseStmtCompound(Statement *parent = nullptr);
+
+    std::vector<NodeExpr*> ParseParameters();
+    NodeExpr *ParseDesignator();
+    NodeAssign *ParseAssign(NodeExpr *left);
+    NodeExpr *ParseBinary(int level);
+    NodeExpr *ParseFactor();
+
     void ParseTypeBlock();
     SymType *ParseType(string name, bool createAlias);
     SymArray *ParseTypeArray(string name);
@@ -28,22 +38,12 @@ private:
     SymTypeSubRange *ParseTypeSubRange(string name);
     void ParseConstBlock();
     void ParseVarBlock();
-    std::vector<Token> ParseIdentList();
+    std::vector<Token> ParseIdentificatorsList();
 
-    NodeCast *createCast(Node *left, Node *right, bool *leftUsed);
-    NodeCast *createCast(Node *left, Node *right, bool *leftUsed, string err);
-    NodeCast *createCast(Symbol *type, Node *right);
-    NodeCast *createCast(Symbol *type, Node *right, string err);
-
-    void ParseDeclSection();
-    Statement *ParseStatement(Statement *parent = nullptr);
-    Statement *ParseStmtCompound(Statement *parent = nullptr);
-
-    std::vector<Node*> ParseParameters();
-    Node *ParseDesignator();
-    Node *ParseAssign(bool mustBe = false);
-    Node *ParseBinary(int level);
-    Node *ParseFactor();
+    int createCast(NodeExpr **left, NodeExpr **right);
+    int createCast(NodeExpr **left, NodeExpr **right, string err);
+    int createCast(SymType *type, NodeExpr **right);
+    int createCast(SymType *type, NodeExpr **right, string err);
 
 public:
     Parser(ifstream *file) : tokenizer(file) {}

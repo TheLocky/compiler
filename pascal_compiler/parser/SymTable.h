@@ -12,6 +12,12 @@
 #include "exception/Exception.h"
 #include <vector>
 
+#define TYPENAME_INT "Integer"
+#define TYPENAME_CHAR "Char"
+#define TYPENAME_STRING "String"
+#define TYPENAME_DOUBLE "Double"
+#define TYPENAME_BOOLEAN "Boolean"
+
 using std::string;
 
 namespace Symbols {
@@ -21,36 +27,13 @@ namespace Symbols {
         TypeArray, TypeConst, TypeVar, TypeAlias, TypeEnd
     };
 
-    class SymTypeInt;
-    class SymTypeDouble;
-    class SymTypeChar;
-    class SymTypeString;
-    class SymTypeBool;
-    class SymTypeSubRange;
-    class SymTypePointer;
-    class SymTypeArray;
-    class SymArray;
-    class SymVar;
-    class SymConst;
-    class SymAlias;
-
     class Symbol {
     public:
         Type typeId = TypeEnd;
         string name;
 
         Symbol(string name) : name(name) { }
-
         virtual void print() = 0;
-
-#define __is(x) inline bool is##x() { return typeId == Type##x; }
-
-        __is(SubRange) __is(Pointer)  __is(Array) __is(Const) __is(Var) __is(Alias)
-
-#define __to(x) inline Sym##x *to##x() { return (Sym##x *) this; }
-#define __toType(x) inline SymType##x *to##x() { return (SymType##x *) this; }
-
-        __toType(SubRange) __toType(Pointer) __to(Array) __to(Const) __to(Var) __to(Alias)
     };
 
     class SymType : public Symbol {
@@ -58,10 +41,9 @@ namespace Symbols {
         SymType(string name) : Symbol(name) { }
 
         virtual Type getTypeId() { return typeId; };
-
         virtual string getTypeStr() = 0;
-
         virtual void print() = 0;
+        virtual SymType *pimpAlias() { return this; }
     };
 
     class SymVar : public Symbol {
@@ -73,9 +55,7 @@ namespace Symbols {
         }
 
         virtual Type getTypeId() { return typeId; };
-
         virtual string getTypeStr();
-
         virtual void print();
     };
 
@@ -88,7 +68,6 @@ namespace Symbols {
         }
 
         string getTypeStr();
-
         void print();
     };
 
@@ -98,8 +77,7 @@ namespace Symbols {
             Symbol::typeId = TypeInt;
         }
 
-        string getTypeStr() { return "Integer"; }
-
+        string getTypeStr() { return TYPENAME_INT; }
         void print() { printf("%s = system integer", name.c_str()); }
     };
 
@@ -109,8 +87,7 @@ namespace Symbols {
             Symbol::typeId = TypeDouble;
         }
 
-        string getTypeStr() { return "Double"; }
-
+        string getTypeStr() { return TYPENAME_DOUBLE; }
         void print() { printf("%s = system double", name.c_str()); }
     };
 
@@ -120,8 +97,7 @@ namespace Symbols {
             Symbol::typeId = TypeChar;
         }
 
-        string getTypeStr() { return "Char"; }
-
+        string getTypeStr() { return TYPENAME_CHAR; }
         void print() { printf("%s = system char", name.c_str()); }
     };
 
@@ -131,8 +107,7 @@ namespace Symbols {
             Symbol::typeId = TypeString;
         }
 
-        string getTypeStr() { return "String"; }
-
+        string getTypeStr() { return TYPENAME_STRING; }
         void print() { printf("%s = system string", name.c_str()); }
     };
 
@@ -142,8 +117,7 @@ namespace Symbols {
             Symbol::typeId = TypeBool;
         }
 
-        string getTypeStr() { return "Bool"; }
-
+        string getTypeStr() { return TYPENAME_BOOLEAN; }
         void print() { printf("%s = system bool", name.c_str()); }
     };
 
@@ -157,8 +131,8 @@ namespace Symbols {
         }
 
         string getTypeStr();
-
         void print();
+        virtual SymType *pimpAlias() override { return left->type; }
     };
 
     class SymTypePointer : public SymType {
@@ -170,7 +144,6 @@ namespace Symbols {
         }
 
         string getTypeStr();
-
         void print();
     };
 
@@ -186,7 +159,6 @@ namespace Symbols {
         }
 
         string getTypeStr();
-
         void print();
     };
 
@@ -199,8 +171,8 @@ namespace Symbols {
         }
 
         string getTypeStr();
-
         void print();
+        virtual SymType *pimpAlias() override { return type->pimpAlias(); }
     };
 }
 
@@ -213,16 +185,12 @@ private:
 public:
     SymTable();
 
-    void addTypeSymbol(Symbols::SymType *symbol);
-    void addVarSymbol(Symbols::SymVar *symbol);
+    void addType(Symbols::SymType *type);
+    void addSymbol(Symbols::SymVar *symbol);
     bool containsType(string name);
-    bool containsVar(string name);
-    Symbols::SymType *getTypeSymbol(string name);
-    Symbols::SymVar *getVarSymbol(string name);
-
-    static bool compareTypes(Symbols::Symbol *one, Symbols::Symbol *two);
-    static bool compareTypes(Symbols::Symbol *one, Symbols::Type type);
-    static bool compareTypes(Symbols::Symbol *one, std::vector<Symbols::Type> typeList);
+    bool contains(string name);
+    Symbols::SymType *getType(string name);
+    Symbols::SymVar *getSymbol(string name);
 
     void print(bool printSystem);
 };

@@ -9,117 +9,119 @@
 #include "SymTable.h"
 
 class Node {
-protected:
-    Token tk;
 public:
-    Symbols::Symbol *symbol;
-
-    Node() : tk(), symbol(nullptr) { };
-
-    Symbols::Symbol *getSymbol() { return symbol; }
     virtual void print(string prefix) = 0;
 };
 
-class ExprBinary : public Node {
+class NodeExpr : public Node {
+public:
+    Token operatorToken;
+    Symbols::SymType *type;
+
+    virtual void print(string prefix) = 0;
+
+    friend class NodeAssign;
+};
+
+class ExprBinary : public NodeExpr {
 private:
-    Node *left;
-    Node *right;
+    NodeExpr *left;
+    NodeExpr *right;
 public:
-    ExprBinary(Token tk, Node *left, Node *right);
-    void setSymbol(Symbols::Symbol *);
+    ExprBinary(Token tk, NodeExpr *left, NodeExpr *right);
 
     void print(string prefix);
 };
 
-class ExprUnary : public Node {
+class ExprUnary : public NodeExpr {
 private:
-    Node *right;
+    NodeExpr *right;
 public:
-    ExprUnary(Token tk, Node *right);
+    ExprUnary(Token tk, NodeExpr *right);
 
     void print(string prefix);
 };
 
-class NodeIntConst : public Node {
+class NodeIntConst : public NodeExpr {
 public:
-    NodeIntConst(Token tk, Symbols::Symbol *symbol);
+    NodeIntConst(Token tk, Symbols::SymType *symbol);
 
     void print(string prefix);
 };
 
-class NodeRealConst : public Node {
+class ExprRealConst : public NodeExpr {
 public:
-    NodeRealConst(Token tk, Symbols::Symbol *symbol);
+    ExprRealConst(Token tk, Symbols::SymType *symbol);
 
     void print(string prefix);
 };
 
-class NodeStringConst : public Node {
+class ExprStringConst : public NodeExpr {
 public:
-    NodeStringConst(Token tk, Symbols::Symbol *symbol);
+    ExprStringConst(Token tk, Symbols::SymType *symbol);
 
     void print(string prefix);
 };
 
-class NodeCharConst : public Node {
+class ExprCharConst : public NodeExpr {
 public:
-    NodeCharConst(Token tk, Symbols::Symbol *symbol);
+    ExprCharConst(Token tk, Symbols::SymType *symbol);
 
     void print(string prefix);
 };
 
-class NodeVariable : public Node {
+class ExprVariable : public NodeExpr {
 public:
-    NodeVariable(Token tk, Symbols::Symbol *symbol);
+    ExprVariable(Token tk, Symbols::SymType *varType);
 
     void print(string prefix);
 };
 
-class NodeArrayIndex : public Node {
+class NodeArrayIndex : public NodeExpr {
 private:
-    Node *parent;
-    Node *child;
+    NodeExpr *parent;
+    NodeExpr *child;
 public:
-    NodeArrayIndex(Node *parent, Node *child);
+    NodeArrayIndex(NodeExpr *parent, NodeExpr *child, Symbols::SymType *arrType);
 
     void print(string prefix);
 };
 
-class NodeRecordAccess : public Node {
+class NodeRecordAccess : public NodeExpr {
 private:
-    Node *left;
-    Node *right;
+    NodeExpr *left;
+    NodeExpr *right;
 public:
-    NodeRecordAccess(Node *left, Node *right);
+    NodeRecordAccess(NodeExpr *left, NodeExpr *right);
 
     void print(string prefix);
 };
 
-class NodeFunc : public Node {
+class NodeFunc : public NodeExpr {
 protected:
-    Node *parent;
-    std::vector<Node*> params;
+    NodeExpr *parent;
+    std::vector<NodeExpr*> params;
 public:
-    NodeFunc(Node *parent, std::vector<Node*> params);
+    NodeFunc(NodeExpr *parent, std::vector<NodeExpr*> params, Symbols::SymType *retType);
 
     void print(string prefix);
 };
 
-class NodeCast : public Node {
+class NodeCast : public NodeExpr {
 public:
     Node *parameter;
 
-    NodeCast(Symbols::Symbol *type, Node *parameter);
+    NodeCast(NodeExpr *parameter, Symbols::SymType *castType);
 
     void print(string prefix);
 };
 
 class NodeAssign : public Node {
 private:
-    Node *left;
-    Node *right;
+    NodeExpr *left;
+    NodeExpr *right;
 public:
-    NodeAssign(Node *left, Node *right);
+    NodeAssign(NodeExpr *left, NodeExpr *right);
 
     void print(string prefix);
 };
