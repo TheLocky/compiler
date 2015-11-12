@@ -46,7 +46,7 @@ public:
     Statement *then;
     Statement *otherwise;
 
-    StmtIf(Statement *parent = nullptr) : Statement(parent) {}
+    StmtIf(Statement *parent = nullptr) : Statement(parent) { otherwise = nullptr; }
 
     void print(string prefix);
 };
@@ -60,41 +60,64 @@ public:
         Statement *statement;
     };
     vector<Case*> cases;
+    Statement *otherwise;
 
-    StmtCase(Statement *parent = nullptr) : Statement(parent) {}
+    StmtCase(Statement *parent = nullptr) : Statement(parent) { otherwise = nullptr; }
 
     void add(Token left, Token right, Statement *stmt);
     void print(string prefix);
 };
 
-class StmtFor : public Statement {
+class StmtLoop : public Statement {
 public:
-    bool to;
-    NodeAssign *initExpr;
-    ExprBinary *condition;
+    StmtLoop(Statement *parent = nullptr) : Statement(parent) {}
+
+    virtual void print(string prefix) = 0;
+};
+
+class StmtFor : public StmtLoop {
+public:
+    bool downto;
+    Symbols::SymVar *variable;
+    NodeExpr *initExpr;
+    NodeExpr *resExpr;
     Statement *statement;
 
-    StmtFor(Statement *parent = nullptr) : Statement(parent) {}
+    StmtFor(Statement *parent = nullptr) : StmtLoop(parent) {}
 
     void print(string prefix);
 };
 
-class StmtWhile : public Statement {
+class StmtWhile : public StmtLoop {
 public:
     ExprBinary *condition;
     Statement *statement;
 
-    StmtWhile(Statement *parent = nullptr) : Statement(parent){}
+    StmtWhile(Statement *parent = nullptr) : StmtLoop(parent){}
 
     void print(string prefix);
 };
 
-class StmtRepeat : public Statement {
+class StmtRepeat : public StmtLoop {
 public:
     ExprBinary *condition;
     Statement *statement;
 
-    StmtRepeat(Statement *parent = nullptr) : Statement(parent) {}
+    StmtRepeat(Statement *parent = nullptr) : StmtLoop(parent) {}
+
+    void print(string prefix);
+};
+
+class StmtBreak : public Statement {
+public:
+    StmtBreak(Statement *parent) : Statement(parent) {}
+
+    void print(string prefix);
+};
+
+class StmtContinue: public Statement {
+public:
+    StmtContinue(Statement *parent) : Statement(parent) {}
 
     void print(string prefix);
 };

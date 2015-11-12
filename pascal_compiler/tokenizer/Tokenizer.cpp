@@ -48,7 +48,9 @@ Token Tokenizer::Next() {
         }
         switch (newState) {
             case ST_SKIP:
-                if (symbol != ' ')
+                if (symbol == '\t')
+                    currentPos += 3;
+                else if (symbol != ' ')
                     currentPos--;
                 break;
             case ST_BEGIN:

@@ -33,21 +33,66 @@ void StmtIf::print(string prefix) {
         printf(string(prefix + "====== ELSE:\n").c_str());
         otherwise->print(prefix + "\t");
     }
-    printf(string(prefix + "====== ENDIF\n").c_str());
+    printf(string(prefix + "====== END IF\n").c_str());
 }
 
 void StmtCase::print(string prefix) {
-
+    printf(string(prefix + "====== CASE:\n").c_str());
+    condition->print(prefix + "\t");
+    printf(string(prefix + "====== OF:\n").c_str());
+    for (auto caseLabel : cases) {
+        string right = caseLabel->right.tokenType != TK_ERROR ? string(" .. ") + caseLabel->right.text : "";
+        printf("\t%s====== %s%s:\n", prefix.c_str(), caseLabel->left.text.c_str(), right.c_str());
+        caseLabel->statement->print(prefix + "\t\t");
+    }
+    if (otherwise != nullptr) {
+        printf(string(prefix + "\t====== ELSE:\n").c_str());
+        otherwise->print(prefix + "\t\t");
+    }
+    printf(string(prefix + "====== END CASE\n").c_str());
 }
 
 void StmtFor::print(string prefix) {
-
+    printf(string(prefix + "====== FOR:\n").c_str());
+    printf(string(prefix + "\t====== VARIABLE: " + variable->name).c_str());
+    printf(string(prefix + "\t====== INIT:\n").c_str());
+    initExpr->print(prefix + "\t\t");
+    printf(string(prefix + "\t====== " + (downto ? "DOWNTO" : "TO") + ":\n").c_str());
+    resExpr->print(prefix + "\t\t");
+    printf(string(prefix + "\t====== DO:\n").c_str());
+    statement->print(prefix + "\t\t");
+    printf(string(prefix + "====== END FOR\n").c_str());
 }
 
 void StmtWhile::print(string prefix) {
-
+    printf(string(prefix + "====== WHILE:\n").c_str());
+    condition->print(prefix + "\t");
+    printf(string(prefix + "====== DO:\n").c_str());
+    statement->print(prefix + "\t");
+    printf(string(prefix + "====== END WHILE\n").c_str());
 }
 
 void StmtRepeat::print(string prefix) {
+    printf(string(prefix + "====== REPEAT:\n").c_str());
+    statement->print(prefix + "\t");
+    printf(string(prefix + "====== UNTIL:\n").c_str());
+    condition->print(prefix + "\t");
+    printf(string(prefix + "====== END REPEAT\n").c_str());
+}
 
+
+void StmtBreak::print(string prefix) {
+    string loopType = "ERROR";
+    if (dynamic_cast<StmtFor*>(parent)) loopType = "FOR LOOP";
+    if (dynamic_cast<StmtWhile*>(parent)) loopType = "WHILE LOOP";
+    if (dynamic_cast<StmtRepeat*>(parent)) loopType = "REPEAT LOOP";
+    printf(string(prefix + "====== BREAK TO " + loopType + "\n").c_str());
+}
+
+void StmtContinue::print(string prefix) {
+    string loopType = "ERROR";
+    if (dynamic_cast<StmtFor*>(parent)) loopType = "FOR LOOP";
+    if (dynamic_cast<StmtWhile*>(parent)) loopType = "WHILE LOOP";
+    if (dynamic_cast<StmtRepeat*>(parent)) loopType = "REPEAT LOOP";
+    printf(string(prefix + "====== CONTINUE TO " + loopType + "\n").c_str());
 }

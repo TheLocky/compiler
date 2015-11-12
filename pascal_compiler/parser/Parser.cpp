@@ -3,6 +3,8 @@
 //
 
 #include "Parser.h"
+#include "Statement.h"
+
 #define ARRAY_SIZE(x) (sizeof(x)/sizeof((x)[0]))
 
 static std::list<LEX_TYPE> priority[] = {
@@ -252,7 +254,7 @@ SymConst *Parser::ParseConstantExpr(string name, std::list<LEX_TYPE> allowTypes)
 }
 
 int Parser::createCast(NodeExpr **left, NodeExpr **right) {
-    return createCast(left, right, "invalid type cast");
+    return createCast(left, right, "");
 }
 
 int Parser::createCast(NodeExpr **left, NodeExpr **right, string err) {
@@ -261,13 +263,15 @@ int Parser::createCast(NodeExpr **left, NodeExpr **right, string err) {
 }
 
 int Parser::createCast(SymType *type, NodeExpr **node) {
-    return createCast(type, node, "invalid type cast");
+    return createCast(type, node, "");
 }
 
 int Parser::createCast(SymType *type, NodeExpr **node, string err) {
     //TODO CLEAR nullptr check
     if (!checkTypeAllow || type == nullptr || (*node)->type == nullptr)
         return -1;
+
+    if (err.empty()) err = string("can't cast ") + (*node)->type->name + " to " + type->name;
 
     type = type->pimpAlias();
     SymType *nodeType = (*node)->type->pimpAlias();
@@ -280,7 +284,8 @@ int Parser::createCast(SymType *type, NodeExpr **node, string err) {
             *node = tmp;
             return 1;
         }
-    } else if (type->name.compare(nodeType->name) == 0) {
+    } else if (type->name.compare(nodeType->name) == 0 &&
+            type->name != "anon" && nodeType->name != "anon") {
         return 0;
     }
     throw SyntaxException(tokenizer.Get().strNum, tokenizer.Get().strPos, err);
@@ -363,47 +368,133 @@ Statement *Parser::ParseStatement(Statement *parent) {
             tokenizer.Next();
             Statement *elseBody = ParseStatement(tmp);
             tmp->otherwise = elseBody;
-        } else
-            tmp->otherwise = nullptr;
+        }
         result = tmp;
     } else if (tk.tokenType == TK_CASE) {
         tokenizer.Next();
-        auto expression = ParseBinary(0);
-        createCast(symTable.getType(TYPENAME_INT), &expression, "expression must be Int or Char type");
-        requireToken(TK_OF, "of");
-        auto tmp = new StmtCase(parent);
-        Token caseToken = tokenizer.Next();
-        while (checkToken(caseToken.tokenType, lexList(TK_END, TK_ELSE, 0))) {
-            std::vector<StmtCase::Case *> labels;
-            do {
-                auto label = new StmtCase::Case;
-                caseToken = tokenizer.Next();
-                if (checkToken(caseToken.tokenType, lexList(TK_INT, TK_CHAR, 0))) {
-                    label->left = Token(caseToken);
-                } else
-                    throw SyntaxException(caseToken.strNum, caseToken.strPos, "case label must be Int or Char type");
-                caseToken = tokenizer.Next();
-                if (caseToken.tokenType == TK_DBLPOINT) {
-                    caseToken = tokenizer.Next();
-                    if (checkToken(caseToken.tokenType, lexList(TK_INT, TK_CHAR, 0))) {
-                        label->right = Token(caseToken);
-                    } else
-                        throw SyntaxException(caseToken.strNum, caseToken.strPos, "case label must be Int or Char type");
-                    caseToken = tokenizer.Next();
-                }
-                labels.push_back(label);
-            } while (caseToken.tokenType == TK_COMMA);
-            requireToken(TK_COLON, ":");
-            tokenizer.Next();
-            Statement *labelStmt = ParseStatement(tmp);
-            for (auto label : labels) {
-                tmp->add(label->left, label->right, labelStmt);
-            }
-            caseToken = tokenizer.Get();
+        result = ParseStmtCase(parent);
+    } else if (tk.tokenType == TK_REPEAT) {
+        tokenizer.Next();
+        auto tmp = new StmtRepeat(parent);
+        tmp->statement = ParseStatement(tmp);
+        requireToken(TK_UNTIL, "until");
+        auto cond = ParseBinary(0);
+        createCast(symTable.getType(TYPENAME_BOOLEAN), &cond, "expression must be Boolean type");
+        tmp->condition = (ExprBinary*)cond;
+        requireToken(TK_SEMICOLON, ";");
+        tokenizer.Next();
+        result = tmp;
+    } else if (tk.tokenType == TK_WHILE) {
+        tokenizer.Next();
+        auto tmp = new StmtWhile(parent);
+        auto cond = ParseBinary(0);
+        createCast(symTable.getType(TYPENAME_BOOLEAN), &cond, "expression must be Boolean type");
+        tmp->condition = (ExprBinary*)cond;
+        requireToken(TK_DO, "do");
+        tokenizer.Next();
+        tmp->statement = ParseStatement(tmp);
+        result = tmp;
+    } else if (tk.tokenType == TK_FOR) {
+        Token ident = tokenizer.Next();
+        requireToken(TK_ID, "<identificator>");
+        SymVar *var = symTable.getSymbol(ident.text);
+        if (checkTypeAllow) {
+            if (!var)
+                throw SyntaxException(ident.strNum, ident.strPos, "undefined variable");
+            if (var->type->pimpAlias()->typeId != TypeInt)
+                throw SyntaxException(ident.strNum, ident.strPos, "variable must be Integer type");
         }
-        if (caseToken.tokenType == TK_ELSE) {
-            caseToken = tokenizer.Next();
+        auto tmp = new StmtFor(parent);
+        tmp->variable = var;
+        auto initExpr = ParseBinary(0);
+        createCast(symTable.getType(TYPENAME_INT), &initExpr);
+        Token direction = tokenizer.Get();
+        if (direction.tokenType == TK_TO)
+            tmp->downto = false;
+        else if (direction.tokenType == TK_DOWNTO)
+            tmp->downto = true;
+        else
+            requireToken(TK_TO, "to' or 'downto");
+        tokenizer.Next();
+        auto resExpr = ParseBinary(0);
+        createCast(symTable.getType(TYPENAME_INT), &resExpr);
+        requireToken(TK_DO, "do");
+        tokenizer.Next();
+        tmp->statement = ParseStatement(parent);
+        tmp->initExpr = initExpr;
+        tmp->resExpr = resExpr;
+        result = tmp;
+    } else if (tk.tokenType == TK_BREAK) {
+        Statement *loop = parent;
+        while (loop != nullptr) {
+            if (dynamic_cast<StmtLoop*>(loop))
+                break;
+            loop = loop->parent;
+        }
+        if (!loop)
+            throw SyntaxException(tk.strPos, tk.strNum, "operator 'break' must be inside the loop");
+        tokenizer.Next();
+        requireToken(TK_SEMICOLON, ";");
+        tokenizer.Next();
+        result = new StmtBreak(loop);
+    } else if (tk.tokenType == TK_CONTINUE) {
+        Statement *loop = parent;
+        while (loop != nullptr) {
+            if (dynamic_cast<StmtLoop*>(loop))
+                break;
+            loop = loop->parent;
+        }
+        if (!loop)
+            throw SyntaxException(tk.strPos, tk.strNum, "operator 'continue' must be inside the loop");
+        tokenizer.Next();
+        requireToken(TK_SEMICOLON, ";");
+        tokenizer.Next();
+        result = new StmtContinue(loop);
+    } else if (tk.tokenType == TK_BEGIN) {
+        result = ParseStmtCompound(parent);
+    } else {
+        Node *node;
+        NodeExpr *expr = ParseBinary(0);
+        thExpectedExpr(expr);
+        if (tokenizer.Get().tokenType == TK_ASSIGN)
+            node = ParseAssign(expr);
+        else
+            node = expr;
+        auto tmp = new StmtExpression(parent);
+        tmp->expression = node;
+        if (tokenizer.Get().tokenType != TK_END) {
+            requireToken(TK_SEMICOLON, ";");
+            tokenizer.Next();
+        }
+        result = tmp;
+    }
+    return result;
+}
+
+Statement *Parser::ParseStmtCompound(Statement *parent) {
+    auto stmt = new StmtCompound(parent);
+    requireToken(TK_BEGIN, "begin");
+    Token tk = tokenizer.Next();
+    while (tk.tokenType != TK_END) {
+        stmt->add(ParseStatement());
+        tk = tokenizer.Get();
+    }
+    tokenizer.Next();
+    return stmt;
+}
+
+Statement *Parser::ParseStmtCase(Statement *parent) {
+    auto expression = ParseBinary(0);
+    createCast(symTable.getType(TYPENAME_INT), &expression, "expression must be Int or Char type");
+    requireToken(TK_OF, "of");
+    auto tmp = new StmtCase(parent);
+    tmp->condition = (ExprBinary*)expression;
+    Token caseToken = tokenizer.Next();
+    while (!checkToken(caseToken.tokenType, lexList(TK_END, TK_ELSE, 0))) {
+        std::vector<StmtCase::Case *> labels;
+        do {
             auto label = new StmtCase::Case;
+            caseToken = tokenizer.Get();
             if (checkToken(caseToken.tokenType, lexList(TK_INT, TK_CHAR, 0))) {
                 label->left = Token(caseToken);
             } else
@@ -417,53 +508,23 @@ Statement *Parser::ParseStatement(Statement *parent) {
                     throw SyntaxException(caseToken.strNum, caseToken.strPos, "case label must be Int or Char type");
                 caseToken = tokenizer.Next();
             }
-            requireToken(TK_COLON, ":");
-            tokenizer.Next();
-            Statement *labelStmt = ParseStatement(tmp);
+            labels.push_back(label);
+        } while (caseToken.tokenType == TK_COMMA);
+        requireToken(TK_COLON, ":");
+        tokenizer.Next();
+        Statement *labelStmt = ParseStatement(tmp);
+        for (auto label : labels) {
             tmp->add(label->left, label->right, labelStmt);
-            tokenizer.Next();
         }
-        requireToken(TK_END, "end");
-        tokenizer.Next();
-        result = tmp;
-    } else if (tk.tokenType == TK_REPEAT) {
-        tokenizer.Next();
-    } else if (tk.tokenType == TK_WHILE) {
-        tokenizer.Next();
-    } else if (tk.tokenType == TK_FOR) {
-        tokenizer.Next();
-    } else if (tk.tokenType == TK_BREAK) {
-
-    } else if (tk.tokenType == TK_CONTINUE) {
-
-    } else if (tk.tokenType == TK_BEGIN) {
-        result = ParseStmtCompound(parent);
-    } else {
-        Node *node;
-        NodeExpr *expr = ParseBinary(0);
-        thExpectedExpr(expr);
-        if (tokenizer.Get().tokenType == TK_ASSIGN)
-            node = ParseAssign(expr);
-        else
-            node = expr;
-        auto tmp = new StmtExpression(parent);
-        tmp->expression = node;
-        result = tmp;
+        caseToken = tokenizer.Get();
     }
-    return result;
-}
-
-Statement *Parser::ParseStmtCompound(Statement *parent) {
-    auto stmt = new StmtCompound(parent);
-    requireToken(TK_BEGIN, "begin");
-    Token tk = tokenizer.Next();
-    while (tk.tokenType != TK_END) {
-        stmt->add(ParseStatement());
-        requireToken(TK_SEMICOLON, ";");
-        tk = tokenizer.Next();
+    if (caseToken.tokenType == TK_ELSE) {
+        tokenizer.Next();
+        tmp->otherwise = ParseStatement(tmp);
     }
+    requireToken(TK_END, "end");
     tokenizer.Next();
-    return stmt;
+    return tmp;
 }
 
 Statement *Parser::Parse() {
