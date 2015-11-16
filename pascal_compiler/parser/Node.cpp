@@ -17,7 +17,7 @@ ExprUnary::ExprUnary(Token tk, NodeExpr *right) {
     type = right->type;
 }
 
-NodeIntConst::NodeIntConst(Token tk, Symbols::SymType *symbol) {
+ExprIntConst::ExprIntConst(Token tk, Symbols::SymType *symbol) {
     operatorToken = tk;
     type = symbol;
 }
@@ -33,6 +33,11 @@ ExprStringConst::ExprStringConst(Token tk, Symbols::SymType *symbol) {
 }
 
 ExprCharConst::ExprCharConst(Token tk, Symbols::SymType *symbol) {
+    operatorToken = tk;
+    type = symbol;
+}
+
+ExprBooleanConst::ExprBooleanConst(Token tk, Symbols::SymType *symbol) {
     operatorToken = tk;
     type = symbol;
 }
@@ -72,6 +77,44 @@ NodeAssign::NodeAssign(NodeExpr *left, NodeExpr *right) {
     this->right = right;
 }
 
+void ExprBinary::print(string prefix) {
+    if (left != NULL)
+        left->print(prefix + "\t");
+    printf("%s%s\n", prefix.c_str(), operatorToken.text.c_str());
+    if (right != NULL)
+        right->print(prefix + "\t");
+}
+
+void ExprUnary::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.text.c_str());
+    if (right != NULL)
+        right->print(prefix + "\t");
+}
+
+void ExprIntConst::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
+}
+
+void ExprRealConst::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
+}
+
+void ExprStringConst::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
+}
+
+void ExprCharConst::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
+}
+
+void ExprBooleanConst::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
+}
+
+void ExprVariable::print(string prefix) {
+    printf("%s%s\n", prefix.c_str(), operatorToken.text.c_str());
+}
+
 void NodeArrayIndex::print(string prefix) {
     if (parent != NULL)
         parent->print(prefix + "\t");
@@ -97,8 +140,10 @@ void NodeFunc::print(string prefix) {
 }
 
 void NodeCast::print(string prefix) {
-    if (parameter != NULL)
-        parameter->print(prefix + "(" + type->name.c_str() + ")" + "\t");
+    if (parameter != NULL) {
+        printf((prefix + "(" + type->name.c_str() + ")\n").c_str());
+        parameter->print(prefix + "\t");
+    }
 }
 
 void NodeAssign::print(string prefix) {
@@ -107,38 +152,4 @@ void NodeAssign::print(string prefix) {
     printf("%s%s\n", prefix.c_str(), ":=");
     if (right != NULL)
         right->print(prefix + "\t");
-}
-
-void ExprBinary::print(string prefix) {
-    if (left != NULL)
-        left->print(prefix + "\t");
-    printf("%s%s\n", prefix.c_str(), operatorToken.text.c_str());
-    if (right != NULL)
-        right->print(prefix + "\t");
-}
-
-void ExprUnary::print(string prefix) {
-    printf("%s%s\n", prefix.c_str(), operatorToken.text.c_str());
-    if (right != NULL)
-        right->print(prefix + "\t");
-}
-
-void NodeIntConst::print(string prefix) {
-    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
-}
-
-void ExprRealConst::print(string prefix) {
-    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
-}
-
-void ExprStringConst::print(string prefix) {
-    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
-}
-
-void ExprCharConst::print(string prefix) {
-    printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
-}
-
-void ExprVariable::print(string prefix) {
-    printf("%s%s\n", prefix.c_str(), operatorToken.text.c_str());
 }

@@ -91,7 +91,7 @@ NodeExpr *Parser::ParseFactor() {
             result = ParseDesignator();
         }
         else if (factor.tokenType == TK_INT) {
-            result = new NodeIntConst(factor, symTable.getType(TYPENAME_INT));
+            result = new ExprIntConst(factor, symTable.getType(TYPENAME_INT));
             tokenizer.Next();
         }
         else if (factor.tokenType == TK_REAL) {
@@ -104,6 +104,10 @@ NodeExpr *Parser::ParseFactor() {
         }
         else if (factor.tokenType == TK_CHAR) {
             result = new ExprCharConst(factor, symTable.getType(TYPENAME_CHAR));
+            tokenizer.Next();
+        }
+        else if (checkToken(factor.tokenType, lexList(TK_TRUE, TK_FALSE, 0))) {
+            result = new ExprBooleanConst(factor, symTable.getType(TYPENAME_BOOLEAN));
             tokenizer.Next();
         }
         else {
@@ -207,7 +211,7 @@ SymArray *Parser::ParseTypeArray(string name) {
     if (tokenizer.Get().tokenType == TK_LSQB) {
         tokenizer.Next();
         indexType = ParseType("anon", false);
-        if (indexType->pimpAlias()->typeId != TypeInt && indexType->pimpAlias()->typeId != TypeChar)
+        if (indexType->peelAlias()->typeId != TypeInt && indexType->peelAlias()->typeId != TypeChar)
             throw SyntaxException(tokenizer.Get().strNum, tokenizer.Get().strPos, "invalid array index type");
         dynamic = false;
         requireToken(TK_RSQB, "]");
@@ -241,13 +245,16 @@ SymConst *Parser::ParseConstantExpr(string name, std::list<LEX_TYPE> allowTypes)
         throw SyntaxException(an.strNum, an.strPos, "unexpected const type");
     switch (an.tokenType) {
         case TK_INT:
-            return new SymConst(name, symTable.getType("Integer"), an);
+            return new SymConst(name, symTable.getType(TYPENAME_INT), an);
         case TK_REAL:
-            return new SymConst(name, symTable.getType("Double"), an);
+            return new SymConst(name, symTable.getType(TYPENAME_DOUBLE), an);
         case TK_CHAR:
-            return new SymConst(name, symTable.getType("Char"), an);
+            return new SymConst(name, symTable.getType(TYPENAME_CHAR), an);
         case TK_STRING:
-            return new SymConst(name, symTable.getType("String"), an);
+            return new SymConst(name, symTable.getType(TYPENAME_STRING), an);
+        case TK_TRUE:
+        case TK_FALSE:
+            return new SymConst(name, symTable.getType(TYPENAME_BOOLEAN), an);
         default:
             throw SyntaxException(an.strNum, an.strPos, "required const expression");
     }
@@ -273,8 +280,8 @@ int Parser::createCast(SymType *type, NodeExpr **node, string err) {
 
     if (err.empty()) err = string("can't cast ") + (*node)->type->name + " to " + type->name;
 
-    type = type->pimpAlias();
-    SymType *nodeType = (*node)->type->pimpAlias();
+    type = type->peelAlias();
+    SymType *nodeType = (*node)->type->peelAlias();
 
     if (type->typeId <= TypeBool && nodeType->typeId <= TypeBool) {
         if (nodeType->typeId == type->typeId)
@@ -284,8 +291,7 @@ int Parser::createCast(SymType *type, NodeExpr **node, string err) {
             *node = tmp;
             return 1;
         }
-    } else if (type->name.compare(nodeType->name) == 0 &&
-            type->name != "anon" && nodeType->name != "anon") {
+    } else if (type == nodeType) {
         return 0;
     }
     throw SyntaxException(tokenizer.Get().strNum, tokenizer.Get().strPos, err);
@@ -356,75 +362,25 @@ Statement *Parser::ParseStatement(Statement *parent) {
     Token tk = tokenizer.Get();
     if (tk.tokenType == TK_IF) {
         tokenizer.Next();
-        auto condition = ParseBinary(0);
-        createCast(symTable.getType(TYPENAME_BOOLEAN), &condition, "condition must be Bool type");
-        requireToken(TK_THEN, "Then");
-        tokenizer.Next();
-        auto tmp = new StmtIf(parent);
-        tmp->condition = (ExprBinary*)condition;
-        Statement *thenBody = ParseStatement(tmp);
-        tmp->then = thenBody;
-        if (tokenizer.Get().tokenType == TK_ELSE) {
-            tokenizer.Next();
-            Statement *elseBody = ParseStatement(tmp);
-            tmp->otherwise = elseBody;
-        }
-        result = tmp;
-    } else if (tk.tokenType == TK_CASE) {
+        result = ParseStmtIf(parent);
+    }
+    else if (tk.tokenType == TK_CASE) {
         tokenizer.Next();
         result = ParseStmtCase(parent);
-    } else if (tk.tokenType == TK_REPEAT) {
+    }
+    else if (tk.tokenType == TK_REPEAT) {
         tokenizer.Next();
-        auto tmp = new StmtRepeat(parent);
-        tmp->statement = ParseStatement(tmp);
-        requireToken(TK_UNTIL, "until");
-        auto cond = ParseBinary(0);
-        createCast(symTable.getType(TYPENAME_BOOLEAN), &cond, "expression must be Boolean type");
-        tmp->condition = (ExprBinary*)cond;
-        requireToken(TK_SEMICOLON, ";");
+        result = ParseStmtRepeat(parent);
+    }
+    else if (tk.tokenType == TK_WHILE) {
         tokenizer.Next();
-        result = tmp;
-    } else if (tk.tokenType == TK_WHILE) {
+        result = ParseStmtWhile(parent);
+    }
+    else if (tk.tokenType == TK_FOR) {
         tokenizer.Next();
-        auto tmp = new StmtWhile(parent);
-        auto cond = ParseBinary(0);
-        createCast(symTable.getType(TYPENAME_BOOLEAN), &cond, "expression must be Boolean type");
-        tmp->condition = (ExprBinary*)cond;
-        requireToken(TK_DO, "do");
-        tokenizer.Next();
-        tmp->statement = ParseStatement(tmp);
-        result = tmp;
-    } else if (tk.tokenType == TK_FOR) {
-        Token ident = tokenizer.Next();
-        requireToken(TK_ID, "<identificator>");
-        SymVar *var = symTable.getSymbol(ident.text);
-        if (checkTypeAllow) {
-            if (!var)
-                throw SyntaxException(ident.strNum, ident.strPos, "undefined variable");
-            if (var->type->pimpAlias()->typeId != TypeInt)
-                throw SyntaxException(ident.strNum, ident.strPos, "variable must be Integer type");
-        }
-        auto tmp = new StmtFor(parent);
-        tmp->variable = var;
-        auto initExpr = ParseBinary(0);
-        createCast(symTable.getType(TYPENAME_INT), &initExpr);
-        Token direction = tokenizer.Get();
-        if (direction.tokenType == TK_TO)
-            tmp->downto = false;
-        else if (direction.tokenType == TK_DOWNTO)
-            tmp->downto = true;
-        else
-            requireToken(TK_TO, "to' or 'downto");
-        tokenizer.Next();
-        auto resExpr = ParseBinary(0);
-        createCast(symTable.getType(TYPENAME_INT), &resExpr);
-        requireToken(TK_DO, "do");
-        tokenizer.Next();
-        tmp->statement = ParseStatement(parent);
-        tmp->initExpr = initExpr;
-        tmp->resExpr = resExpr;
-        result = tmp;
-    } else if (tk.tokenType == TK_BREAK) {
+        result = ParseStmtFor(parent);
+    }
+    else if (tk.tokenType == TK_BREAK) {
         Statement *loop = parent;
         while (loop != nullptr) {
             if (dynamic_cast<StmtLoop*>(loop))
@@ -434,10 +390,13 @@ Statement *Parser::ParseStatement(Statement *parent) {
         if (!loop)
             throw SyntaxException(tk.strPos, tk.strNum, "operator 'break' must be inside the loop");
         tokenizer.Next();
-        requireToken(TK_SEMICOLON, ";");
-        tokenizer.Next();
+        if (tokenizer.Get().tokenType != TK_END) {
+            requireToken(TK_SEMICOLON, ";");
+            tokenizer.Next();
+        }
         result = new StmtBreak(loop);
-    } else if (tk.tokenType == TK_CONTINUE) {
+    }
+    else if (tk.tokenType == TK_CONTINUE) {
         Statement *loop = parent;
         while (loop != nullptr) {
             if (dynamic_cast<StmtLoop*>(loop))
@@ -447,12 +406,16 @@ Statement *Parser::ParseStatement(Statement *parent) {
         if (!loop)
             throw SyntaxException(tk.strPos, tk.strNum, "operator 'continue' must be inside the loop");
         tokenizer.Next();
-        requireToken(TK_SEMICOLON, ";");
-        tokenizer.Next();
+        if (tokenizer.Get().tokenType != TK_END) {
+            requireToken(TK_SEMICOLON, ";");
+            tokenizer.Next();
+        }
         result = new StmtContinue(loop);
-    } else if (tk.tokenType == TK_BEGIN) {
+    }
+    else if (tk.tokenType == TK_BEGIN) {
         result = ParseStmtCompound(parent);
-    } else {
+    }
+    else {
         Node *node;
         NodeExpr *expr = ParseBinary(0);
         thExpectedExpr(expr);
@@ -468,6 +431,9 @@ Statement *Parser::ParseStatement(Statement *parent) {
         }
         result = tmp;
     }
+    if (tokenizer.Get().tokenType == TK_SEMICOLON) {
+        tokenizer.Next();
+    }
     return result;
 }
 
@@ -481,6 +447,24 @@ Statement *Parser::ParseStmtCompound(Statement *parent) {
     }
     tokenizer.Next();
     return stmt;
+}
+
+Statement *Parser::ParseStmtIf(Statement *parent) {
+    auto condition = ParseBinary(0);
+    thExpectedExpr(condition);
+    createCast(symTable.getType(TYPENAME_BOOLEAN), &condition, "condition must be Boolean type");
+    requireToken(TK_THEN, "Then");
+    tokenizer.Next();
+    auto tmp = new StmtIf(parent);
+    tmp->condition = (ExprBinary*)condition;
+    Statement *thenBody = ParseStatement(tmp);
+    tmp->then = thenBody;
+    if (tokenizer.Get().tokenType == TK_ELSE) {
+        tokenizer.Next();
+        Statement *elseBody = ParseStatement(tmp);
+        tmp->otherwise = elseBody;
+    }
+    return tmp;
 }
 
 Statement *Parser::ParseStmtCase(Statement *parent) {
@@ -499,17 +483,19 @@ Statement *Parser::ParseStmtCase(Statement *parent) {
                 label->left = Token(caseToken);
             } else
                 throw SyntaxException(caseToken.strNum, caseToken.strPos, "case label must be Int or Char type");
-            caseToken = tokenizer.Next();
             if (caseToken.tokenType == TK_DBLPOINT) {
                 caseToken = tokenizer.Next();
                 if (checkToken(caseToken.tokenType, lexList(TK_INT, TK_CHAR, 0))) {
                     label->right = Token(caseToken);
                 } else
                     throw SyntaxException(caseToken.strNum, caseToken.strPos, "case label must be Int or Char type");
-                caseToken = tokenizer.Next();
             }
             labels.push_back(label);
-        } while (caseToken.tokenType == TK_COMMA);
+            if (tokenizer.Next().tokenType != TK_COMMA)
+                break;
+            else
+                tokenizer.Next();
+        } while (true);
         requireToken(TK_COLON, ":");
         tokenizer.Next();
         Statement *labelStmt = ParseStatement(tmp);
@@ -523,6 +509,71 @@ Statement *Parser::ParseStmtCase(Statement *parent) {
         tmp->otherwise = ParseStatement(tmp);
     }
     requireToken(TK_END, "end");
+    tokenizer.Next();
+    return tmp;
+}
+
+Statement *Parser::ParseStmtFor(Statement *parent) {
+    Token ident = tokenizer.Get();
+    requireToken(TK_ID, "<identificator>");
+    SymVar *var = symTable.getSymbol(ident.text);
+    if (checkTypeAllow) {
+        if (!var)
+            throw SyntaxException(ident.strNum, ident.strPos, "undefined variable");
+        if (var->type->peelAlias()->typeId != TypeInt)
+            throw SyntaxException(ident.strNum, ident.strPos, "variable must be Integer type");
+    }
+    auto tmp = new StmtFor(parent);
+    tmp->variable = var;
+    tokenizer.Next();
+    requireToken(TK_ASSIGN, ":=");
+    tokenizer.Next();
+    auto initExpr = ParseBinary(0);
+    createCast(symTable.getType(TYPENAME_INT), &initExpr);
+    Token direction = tokenizer.Get();
+    if (direction.tokenType == TK_TO)
+        tmp->downto = false;
+    else if (direction.tokenType == TK_DOWNTO)
+        tmp->downto = true;
+    else
+        requireToken(TK_TO, "to' or 'downto");
+    tokenizer.Next();
+    auto resExpr = ParseBinary(0);
+    createCast(symTable.getType(TYPENAME_INT), &resExpr);
+    requireToken(TK_DO, "do");
+    tokenizer.Next();
+    tmp->statement = ParseStatement(tmp);
+    tmp->initExpr = initExpr;
+    tmp->resExpr = resExpr;
+    return tmp;
+}
+
+Statement *Parser::ParseStmtWhile(Statement *parent) {
+    auto tmp = new StmtWhile(parent);
+    auto cond = ParseBinary(0);
+    createCast(symTable.getType(TYPENAME_BOOLEAN), &cond, "expression must be Boolean type");
+    tmp->condition = (ExprBinary*)cond;
+    requireToken(TK_DO, "do");
+    tokenizer.Next();
+    tmp->statement = ParseStatement(tmp);
+    return tmp;
+}
+
+Statement *Parser::ParseStmtRepeat(Statement *parent) {
+    auto tmp = new StmtRepeat(parent);
+    auto stmtList = new StmtCompound(tmp);
+    Token tk = tokenizer.Get();
+    while (tk.tokenType != TK_UNTIL) {
+        stmtList->add(ParseStatement());
+        tk = tokenizer.Get();
+    }
+    tmp->statement = stmtList;
+    requireToken(TK_UNTIL, "until");
+    tokenizer.Next();
+    auto cond = ParseBinary(0);
+    createCast(symTable.getType(TYPENAME_BOOLEAN), &cond, "expression must be Boolean type");
+    tmp->condition = (ExprBinary*)cond;
+    requireToken(TK_SEMICOLON, ";");
     tokenizer.Next();
     return tmp;
 }

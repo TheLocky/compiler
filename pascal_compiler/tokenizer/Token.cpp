@@ -61,6 +61,9 @@ int Token::getTokenType(LEX_TYPE lt) {
         case TK_OR:
         case TK_XOR:
         case TK_DIV:
+        case TK_CASE:
+        case TK_TRUE:
+        case TK_FALSE:
         case TK_MOD: return 7;//"keyword"
         case TK_CGT:
         case TK_CLT:
@@ -88,6 +91,7 @@ int Token::getTokenType(LEX_TYPE lt) {
         case TK_DBLPOINT:
         case TK_POINT:
         case TK_COMMA: return 9;//"sep"
+        case TK_ERROR:break;
     }
 }
 
@@ -133,6 +137,9 @@ string Token::getStr() {
             break;
         case 6:
             return text.substr(1, text.length() - 2);
+        case 7:
+            if (tokenType == TK_TRUE || tokenType == TK_FALSE)
+                return text;
         default:
             return "";
     }

@@ -24,7 +24,11 @@ private:
     void ParseDeclarationSection();
     Statement *ParseStatement(Statement *parent = nullptr);
     Statement *ParseStmtCompound(Statement *parent = nullptr);
+    Statement *ParseStmtIf(Statement *parent = nullptr);
     Statement *ParseStmtCase(Statement *parent = nullptr);
+    Statement *ParseStmtFor(Statement *parent = nullptr);
+    Statement *ParseStmtWhile(Statement *parent = nullptr);
+    Statement *ParseStmtRepeat(Statement *parent = nullptr);
 
     std::vector<NodeExpr*> ParseParameters();
     NodeExpr *ParseDesignator();

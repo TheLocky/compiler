@@ -54,7 +54,7 @@ void StmtCase::print(string prefix) {
 
 void StmtFor::print(string prefix) {
     printf(string(prefix + "====== FOR:\n").c_str());
-    printf(string(prefix + "\t====== VARIABLE: " + variable->name).c_str());
+    printf(string(prefix + "\t====== VARIABLE: " + variable->name + "\n").c_str());
     printf(string(prefix + "\t====== INIT:\n").c_str());
     initExpr->print(prefix + "\t\t");
     printf(string(prefix + "\t====== " + (downto ? "DOWNTO" : "TO") + ":\n").c_str());
@@ -86,7 +86,7 @@ void StmtBreak::print(string prefix) {
     if (dynamic_cast<StmtFor*>(parent)) loopType = "FOR LOOP";
     if (dynamic_cast<StmtWhile*>(parent)) loopType = "WHILE LOOP";
     if (dynamic_cast<StmtRepeat*>(parent)) loopType = "REPEAT LOOP";
-    printf(string(prefix + "====== BREAK TO " + loopType + "\n").c_str());
+    printf(string(prefix + "====== BREAK " + loopType + "\n").c_str());
 }
 
 void StmtContinue::print(string prefix) {
@@ -94,5 +94,5 @@ void StmtContinue::print(string prefix) {
     if (dynamic_cast<StmtFor*>(parent)) loopType = "FOR LOOP";
     if (dynamic_cast<StmtWhile*>(parent)) loopType = "WHILE LOOP";
     if (dynamic_cast<StmtRepeat*>(parent)) loopType = "REPEAT LOOP";
-    printf(string(prefix + "====== CONTINUE TO " + loopType + "\n").c_str());
+    printf(string(prefix + "====== CONTINUE " + loopType + "\n").c_str());
 }

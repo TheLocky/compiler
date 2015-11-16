@@ -43,7 +43,7 @@ namespace Symbols {
         virtual Type getTypeId() { return typeId; };
         virtual string getTypeStr() = 0;
         virtual void print() = 0;
-        virtual SymType *pimpAlias() { return this; }
+        virtual SymType *peelAlias() { return this; }
     };
 
     class SymVar : public Symbol {
@@ -132,7 +132,7 @@ namespace Symbols {
 
         string getTypeStr();
         void print();
-        virtual SymType *pimpAlias() override { return left->type; }
+        virtual SymType *peelAlias() override { return left->type; }
     };
 
     class SymTypePointer : public SymType {
@@ -172,7 +172,7 @@ namespace Symbols {
 
         string getTypeStr();
         void print();
-        virtual SymType *pimpAlias() override { return type->pimpAlias(); }
+        virtual SymType *peelAlias() override { return type->peelAlias(); }
     };
 }
 

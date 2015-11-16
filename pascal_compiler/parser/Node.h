@@ -42,9 +42,9 @@ public:
     void print(string prefix);
 };
 
-class NodeIntConst : public NodeExpr {
+class ExprIntConst : public NodeExpr {
 public:
-    NodeIntConst(Token tk, Symbols::SymType *symbol);
+    ExprIntConst(Token tk, Symbols::SymType *symbol);
 
     void print(string prefix);
 };
@@ -66,6 +66,13 @@ public:
 class ExprCharConst : public NodeExpr {
 public:
     ExprCharConst(Token tk, Symbols::SymType *symbol);
+
+    void print(string prefix);
+};
+
+class ExprBooleanConst : public NodeExpr {
+public:
+    ExprBooleanConst(Token tk, Symbols::SymType *symbol);
 
     void print(string prefix);
 };

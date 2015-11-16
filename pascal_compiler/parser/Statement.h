@@ -101,7 +101,7 @@ public:
 class StmtRepeat : public StmtLoop {
 public:
     ExprBinary *condition;
-    Statement *statement;
+    StmtCompound *statement;
 
     StmtRepeat(Statement *parent = nullptr) : StmtLoop(parent) {}
 
