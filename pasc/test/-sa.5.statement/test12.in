@@ -1,0 +1,9 @@
+var
+	a : Char;
+begin
+	case a of
+		'A': a := 'B';
+		'a'..'z': a := #0;
+		3.5: a := #1;
+	end
+end.

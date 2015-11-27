@@ -1,0 +1,41 @@
+====== SYMBOLS TABLE: 
+Var j is Integer
+Var i is Integer
+Var c is Boolean
+Var b is Boolean
+Var a is Boolean
+====== END TABLE
+
+====== BEGIN BLOCK:
+	====== WHILE:
+		a
+	====== DO:
+		====== REPEAT:
+			====== FOR:
+				====== VARIABLE: i
+				====== INIT:
+					0
+				====== DOWNTO:
+					10
+				====== DO:
+					====== IF:
+						c
+					====== THEN:
+							j
+						:=
+									j
+								+
+									i
+							+
+								1
+					====== ELSE:
+							j
+						:=
+							0
+					====== END IF
+			====== END FOR
+		====== UNTIL:
+			b
+		====== END REPEAT
+	====== END WHILE
+====== END BLOCK

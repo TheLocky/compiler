@@ -1,0 +1,5 @@
+var
+	a, b : Boolean;
+begin
+	if a and b then a := 0
+end.

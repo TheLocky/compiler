@@ -1,0 +1,6 @@
+var
+	a : Boolean;
+begin
+	case a of
+	end
+end.

@@ -1,0 +1,11 @@
+====== SYMBOLS TABLE: 
+Var a is Boolean
+====== END TABLE
+
+====== BEGIN BLOCK:
+	====== CASE:
+		(Integer)
+			a
+	====== OF:
+	====== END CASE
+====== END BLOCK

@@ -1,0 +1,17 @@
+====== SYMBOLS TABLE: 
+Var b is Boolean
+Var a is Boolean
+====== END TABLE
+
+====== BEGIN BLOCK:
+	====== IF:
+			a
+		and
+			b
+	====== THEN:
+			a
+		:=
+			(Boolean)
+				0
+	====== END IF
+====== END BLOCK

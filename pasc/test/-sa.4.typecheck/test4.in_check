@@ -1,0 +1,12 @@
+====== SYMBOLS TABLE: 
+Var b is Array[Integer] of Double
+====== END TABLE
+
+====== BEGIN BLOCK:
+			b
+		[ ]
+			0
+	:=
+		(Double)
+			0
+====== END BLOCK

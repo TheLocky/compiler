@@ -1,0 +1,7 @@
+var
+	a : Integer;
+begin
+	case a of
+		1..100 : a := 0
+	end
+end.

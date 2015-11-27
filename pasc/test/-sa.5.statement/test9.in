@@ -1,0 +1,8 @@
+var
+	a : Integer;
+begin
+	case a of
+		5000: a := 2500;
+		else a := 0;
+	end
+end.

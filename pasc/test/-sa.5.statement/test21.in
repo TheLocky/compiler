@@ -1,0 +1,6 @@
+begin
+	repeat
+	begin
+	end
+	until true;
+end.

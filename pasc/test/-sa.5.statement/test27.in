@@ -1,0 +1,4 @@
+begin
+	while true do
+		continue
+end.

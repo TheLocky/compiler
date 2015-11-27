@@ -1,0 +1,6 @@
+var
+	a, b: Integer;
+begin
+	if a - b then a := 5;
+	else b := 5
+end.

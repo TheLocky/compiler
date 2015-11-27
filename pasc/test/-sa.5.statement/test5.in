@@ -1,0 +1,5 @@
+var
+	t : Double;
+begin
+	if t then t := 0
+end.

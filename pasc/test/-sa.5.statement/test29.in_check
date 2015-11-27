@@ -1,0 +1,15 @@
+====== SYMBOLS TABLE: 
+Var i is Integer
+====== END TABLE
+
+====== BEGIN BLOCK:
+	====== FOR:
+		====== VARIABLE: i
+		====== INIT:
+			0
+		====== TO:
+			10
+		====== DO:
+			====== CONTINUE FOR LOOP
+	====== END FOR
+====== END BLOCK

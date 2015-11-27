@@ -1,0 +1,11 @@
+====== SYMBOLS TABLE: 
+Var b is Char
+Var a is String
+====== END TABLE
+
+====== BEGIN BLOCK:
+		a
+	:=
+		(String)
+			b
+====== END BLOCK

@@ -1,0 +1,113 @@
+Program -> [PROGRAM Ident ';']
+           Block '.'
+Block -> [DeclSection]...
+         CompoundStmt
+DeclSection -> ConstSection
+            -> TypeSection
+            -> VarSection
+            -> ProcedureDeclSection
+ConstSection -> CONST (ConstantDecl ';')...
+ConstantDecl -> Ident '=' ConstExpr 
+TypeSection -> TYPE (TypeDecl ';')... 
+TypeDecl -> Ident '=' [TYPE] Type
+Type -> SimpleType
+     -> StrucType
+     -> PointerType
+     -> StringType 
+     -> ProcedureType
+
+SimpleType -> (OrdinalType | RealType)
+RealType -> DOUBLE
+OrdinalType -> (SubrangeType | OrdIdent)
+OrdIdent -> INTEGER
+         -> CHAR
+		 -> BOOLEAN
+
+SubrangeType -> ConstExpr '..' ConstExpr
+StringType -> STRING
+
+StrucType -> (ArrayType | RecType)
+ArrayType -> ARRAY ['[' OrdinalType ','... ']'] OF Type
+RecType -> RECORD [FieldList] END 
+FieldList -> FieldDecl ';'...
+FieldDecl -> IdentList ':' Type
+
+PointerType -> '^' Type 
+ProcedureType -> (ProcedureHeading | FunctionHeading)
+VarSection -> VAR (VarDecl ';')...
+VarDecl  IdentList ':' Type
+
+Expression -> SimpleExpression [RelOp SimpleExpression]...
+SimpleExpression -> ['+' | '-'] Term [AddOp Term]...
+Term -> Factor [MulOp Factor]...
+
+Factor -> Designator ['(' ExprList ')']
+       -> '@' Designator
+       -> Number
+       -> String
+       -> NIL
+       -> '(' Expression ')'
+       -> NOT Factor
+       -> Type '(' Expression ')'
+
+RelOp -> '>'
+      -> '<'
+      -> '<='
+      -> '>='
+      -> '<>'
+
+AddOp -> '+'
+      -> '-'
+      -> OR
+      -> XOR
+
+MulOp -> '*'
+      -> '/'
+      -> DIV
+      -> MOD
+      -> AND
+
+Designator -> Ident ['.' Ident | '[' ExprList ']' | '^']...
+Statement -> [SimpleStatement | StructStmt]
+StmtList -> Statement ';' 
+SimpleStatement -> Designator ['(' [ExprList] ')']
+                -> Designator ':=' Expression
+StructStmt -> CompoundStmt
+           -> ConditionalStmt
+           -> LoopStmt
+           -> 'break'
+           -> 'continue'
+CompoundStmt -> BEGIN StmtList END
+ConditionalStmt -> IfStmt
+                -> CaseStmt
+IfStmt -> IF Expression THEN Statement [ELSE Statement]
+CaseStmt -> CASE Expression OF CaseSelector ';'... [ELSE StmtList] END
+CaseSelector -> CaseLabel ','... ':' Statement
+CaseLabel -> ConstExpr ['..' ConstExpr]
+LoopStmt -> RepeatStmt
+         -> WhileStmt
+         -> ForStmt
+RepeatStmt -> REPEAT Statement UNTIL Expression
+WhileStmt -> WHILE Expression DO Statement
+ForStmt -> FOR Ident ':=' Expression (TO | DOWNTO) Expression DO Statement
+
+ProcedureDeclSection -> ProcedureDecl
+                     -> FunctionDecl
+ProcedureDecl -> ProcedureHeading ';'
+                 Block ';'
+FunctionDecl -> FunctionHeading ';'
+                Block ';'
+FunctionHeading -> FUNCTION Ident [FormalParameters] ':' (SimpleType | STRING)
+
+ProcedureHeading -> PROCEDURE Ident [FormalParameters]
+FormalParameters -> '(' [FormalParm ';'...] ')'
+FormalParm -> [VAR] Parameter
+Parameter -> IdentList [':' ([ARRAY OF] SimpleType | STRING)]
+          -> Ident ':' SimpleType
+
+IdentList -> Ident ','...
+Ident -> <identifier>
+ConstExpr -> <constant-expression>
+
+Number -> <number>
+String -> <string>

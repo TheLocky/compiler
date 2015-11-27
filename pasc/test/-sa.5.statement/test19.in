@@ -1,0 +1,7 @@
+var
+	a: Boolean;
+begin
+	while a do
+	begin
+	end
+end.

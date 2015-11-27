@@ -1,0 +1,7 @@
+var
+	a: Integer;
+	b: Double;
+begin
+	for b := 0.1 to 1.0 do
+		a := b
+end.

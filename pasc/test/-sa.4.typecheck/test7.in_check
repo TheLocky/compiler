@@ -1,0 +1,13 @@
+====== SYMBOLS TABLE: 
+Var arr is Array[Char] of Double
+====== END TABLE
+
+====== BEGIN BLOCK:
+			arr
+		[ ]
+			(Char)
+				1
+	:=
+		(Double)
+			1
+====== END BLOCK

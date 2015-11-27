@@ -1,0 +1,7 @@
+var
+	a: Integer;
+	arr: Array[0..10] of Integer;
+begin
+	for a := 10 downto 0 do
+		arr[a] := 10 - a
+end.

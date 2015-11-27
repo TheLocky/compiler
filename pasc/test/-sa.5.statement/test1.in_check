@@ -1,0 +1,13 @@
+====== BEGIN BLOCK:
+	====== IF:
+			1
+		>
+			2
+	====== THEN:
+		====== BEGIN BLOCK:
+		====== END BLOCK
+	====== ELSE:
+		====== BEGIN BLOCK:
+		====== END BLOCK
+	====== END IF
+====== END BLOCK

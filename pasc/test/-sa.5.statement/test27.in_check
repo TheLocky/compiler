@@ -1,0 +1,7 @@
+====== BEGIN BLOCK:
+	====== WHILE:
+		true
+	====== DO:
+		====== CONTINUE WHILE LOOP
+	====== END WHILE
+====== END BLOCK

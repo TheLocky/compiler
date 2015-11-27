@@ -1,0 +1,8 @@
+var
+	a: Boolean;
+begin
+	repeat
+	begin
+	end
+	until a;
+end.

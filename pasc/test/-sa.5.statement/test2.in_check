@@ -1,0 +1,16 @@
+====== SYMBOLS TABLE: 
+Var b is Integer
+Var a is Integer
+====== END TABLE
+
+====== BEGIN BLOCK:
+	====== IF:
+			a
+		>
+			b
+	====== THEN:
+			b
+		:=
+			a
+	====== END IF
+====== END BLOCK

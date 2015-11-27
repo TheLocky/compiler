@@ -1,0 +1,18 @@
+====== SYMBOLS TABLE: 
+Var a is Integer
+====== END TABLE
+
+====== BEGIN BLOCK:
+	====== CASE:
+		a
+	====== OF:
+		====== 1:
+				a
+			:=
+				0
+		====== 2:
+				a
+			:=
+				1
+	====== END CASE
+====== END BLOCK

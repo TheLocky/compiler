@@ -1,0 +1,13 @@
+var
+	a,b,c : Boolean;
+	i,j : Integer;
+begin
+	while a do
+		repeat
+			for i := 0 downto 10 do
+				if c then
+					j := j + i + 1;
+				else
+					j := 0;
+		until b;
+end.
