@@ -1,0 +1,12 @@
+====== PROCEDURE main:
+====== DEFINE: 
+	====== BEGIN BLOCK:
+		====== REPEAT:
+			====== BEGIN BLOCK:
+				====== BEGIN BLOCK:
+				====== END BLOCK
+			====== END BLOCK
+		====== UNTIL:
+			true
+		====== END REPEAT
+	====== END BLOCK

@@ -1,0 +1,8 @@
+type
+	rec = record
+		a: String;
+	end;
+var
+	c : rec;
+begin
+end.

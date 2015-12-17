@@ -1,0 +1,16 @@
+type
+	Rec = Record 
+		a: Integer;
+		b: Integer;
+		c: record
+			a: Integer; 
+			b: Integer;
+		end;
+	end;
+var
+	a: record
+		a: Integer;
+		b: Double; 
+	end;
+begin
+end.

@@ -1,0 +1,13 @@
+type
+	TPoint = record 
+		x: Double;
+		y: Double;
+	end;
+procedure P(a: Integer; b: Integer; Point: TPoint);
+var
+	NewPoint: TPoint;
+begin
+end
+
+begin
+end.

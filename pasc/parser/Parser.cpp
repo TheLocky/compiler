@@ -131,7 +131,7 @@ NodeExpr *Parser::ParseDesignator() {
             tokenizer.Next();
             auto params = ParseParameters();
 			requireToken(TK_RB, ")");
-			auto proc = currentTable->getCastedSymbol<SymProcedure *>(ident.text);
+			auto proc = currentTable->getCastedSymbol<SymProcedure *>(ident);
 			if (!proc) throw SyntaxException(ident, string("symbol '") + ident.text + "' is not callable");
 			if (params.size() != proc->parameters.size())
 				throw SyntaxException(ident, string("undefined symbol '") + ident.text + "'");
@@ -167,9 +167,11 @@ NodeExpr *Parser::ParseDesignator() {
             tokenizer.Next();
             requireToken(TK_ID, "<identificator>");
 			Token field = tokenizer.Get();
-			auto rec = currentTable->getCastedSymbol<SymRecord *>(ident.text);
-			if (!rec) throw SyntaxException(ident, string("undefined record '") + ident.text + "'");
-			auto var = rec->localTable->getCastedSymbol<SymVar *>(field.text);
+			auto recType = currentTable->getCastedSymbol<SymVar *>(ident, TypeVar)->type;
+			if (recType->typeId() != TypeRecord)
+				throw SyntaxException(field, string("symbol '") + field.text + "is not Record");
+			auto record = (SymRecord *)recType;
+			auto var = record->localTable->getCastedSymbolNoThrow<SymVar *>(field);
 			if (!var) throw SyntaxException(ident, string("record '") + ident.text + 
 				"' not contains symbol '" + field.text + "'");
             NodeExpr *right = new ExprVariable(field, var->type);
@@ -200,13 +202,10 @@ SymType *Parser::ParseType(string name, bool createAlias) {
     Token typeName = tokenizer.Get();
     if (typeName.tokenType == TK_ID) {
         tokenizer.Next();
-        if (currentTable->containsType(typeName.text)) {
-            if (createAlias)
-                return new SymAlias(name, currentTable->getType(typeName.text));
-            else
-                return currentTable->getType(typeName.text);
-        } else
-            throw SyntaxException(typeName.strNum, typeName.strPos, string("unknown type '") + typeName.text + "'");
+        if (createAlias)
+            return new SymAlias(name, currentTable->getType(typeName));
+        else
+            return currentTable->getType(typeName);
     } else if(typeName.tokenType == TK_ARRAY) {
         return ParseTypeArray(name);
     } else if (checkToken(typeName.tokenType, lexList(TK_INT, TK_CHAR, 0))) {
@@ -351,12 +350,12 @@ std::vector<Token> Parser::ParseIdentificatorsList() {
 }
 
 void Parser::ParseProcedure() {
-	Token procedureName = tokenizer.Next();
+	Token procedureName = tokenizer.Get();
 	requireToken(TK_ID, "<identificator>");
+	tokenizer.Next();
 	SymTable *newTable = new SymTable(currentTable);
 	currentTable = newTable;
 	auto proc = new SymProcedure(procedureName.text, newTable);
-	tokenizer.Next();
 	if (tokenizer.Get().tokenType == TK_LB) {
 		tokenizer.Next();
 		proc->parameters = ParseProcedureParameters();
@@ -391,11 +390,11 @@ std::vector<SymProcedure::Parameter> Parser::ParseProcedureParameters() {
 				requireToken(TK_OF, "of");
 				typeTok = tokenizer.Next();
 				requireToken(TK_ID, "<identificator>");
-				SymType *arrType = currentTable->getType(typeTok.text);
+				SymType *arrType = currentTable->getType(typeTok);
 				type = new SymArray("anon", arrType, GLOBAL_INT, true);
 			}
 			else if (typeTok.tokenType == TK_ID) {
-				type = currentTable->getType(typeTok.text);
+				type = currentTable->getType(typeTok);
 			}
 			else requireToken(TK_ID, "<identificator>");
 			for (auto name : namesList) {
@@ -403,18 +402,19 @@ std::vector<SymProcedure::Parameter> Parser::ParseProcedureParameters() {
 				SymProcedure::Parameter param(name.text, mode);
 				params.push_back(param);
 			}
-		} while (tokenizer.CheckAndNext(TK_COMMA));
+			tokenizer.Next();
+		} while (tokenizer.CheckAndNext(TK_SEMICOLON));
 	}
 	return params;
 }
 
 void Parser::ParseFunction() {
-	Token functionName = tokenizer.Next();
+	Token functionName = tokenizer.Get();
 	requireToken(TK_ID, "<identificator>");
+	tokenizer.Next();
 	SymTable *newTable = new SymTable(currentTable);
 	currentTable = newTable;
 	auto func = new SymFunction(functionName.text, newTable);
-	tokenizer.Next();
 	if (tokenizer.Get().tokenType == TK_LB) {
 		tokenizer.Next();
 		func->parameters = ParseProcedureParameters();
@@ -424,7 +424,8 @@ void Parser::ParseFunction() {
 	requireToken(TK_COLON, ":");
 	Token typeName = tokenizer.Next();
 	requireToken(TK_ID, "<identificator>");
-	func->retType = currentTable->getType(typeName.text);
+	func->retType = currentTable->getType(typeName);
+	tokenizer.Next();
 	requireToken(TK_SEMICOLON, ";");
 	tokenizer.Next();
 	ParseDeclarationSection();
@@ -439,11 +440,11 @@ SymRecord * Parser::ParseRecord(string name)
 	auto newTable = new SymTable(currentTable);
 	auto rec = new SymRecord(name, newTable);
 	Token tok = tokenizer.Next();
-	if (tok.tokenType == TK_END) {
-		tokenizer.Next();
-		return rec;
-	}
 	do {
+		if (tokenizer.Get().tokenType == TK_END) {
+			tokenizer.Next();
+			return rec;
+		}
 		requireToken(TK_ID, "<identificator>");
 		auto varList = ParseIdentificatorsList();
 		requireToken(TK_COLON, ":");
@@ -453,12 +454,8 @@ SymRecord * Parser::ParseRecord(string name)
 			newTable->addSymbol(new SymVar(var.text, type));
 		if (tokenizer.Get().tokenType != TK_END) {
 			requireToken(TK_SEMICOLON, ";");
-		}
-		else {
 			tokenizer.Next();
-			return rec;
 		}
-		tokenizer.Next();
 	} while (true);
 }
 
@@ -468,7 +465,7 @@ void Parser::ParseDeclarationSection() {
         checkTypeAllow = false;
         declarationSection = tokenizer.Next();
     }
-    while (checkToken(declarationSection.tokenType, lexList(TK_TYPE, TK_CONST, TK_VAR, 0))) {
+    while (checkToken(declarationSection.tokenType, lexList(TK_TYPE, TK_CONST, TK_VAR, TK_PROCEDURE, TK_FUNCTION, 0))) {
         tokenizer.Next();
         if (declarationSection.tokenType == TK_TYPE)
             ParseTypeBlock();
@@ -706,7 +703,7 @@ Statement *Parser::ParseStmtRepeat(Statement *parent) {
 }
 
 SymProcedure *Parser::Parse() {
-    currentTable = new SymTable;
+    currentTable = new SymTable();
     currentTable->addSystemTypes();
     auto mainProc = new SymProcedure("main", currentTable);
     ParseDeclarationSection();

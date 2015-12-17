@@ -1,0 +1,7 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		a is Array of Array[Integer] of Char with index type SubRange of Char
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

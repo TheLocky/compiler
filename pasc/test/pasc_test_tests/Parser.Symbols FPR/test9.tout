@@ -1,0 +1,44 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		====== RECORD TypePoint:
+			====== SYMBOLS TABLE: 
+				Var x is Double
+				Var y is Double
+			====== END TABLE
+
+		====== FUNCTION P:
+			====== SYMBOLS TABLE: 
+				Var Result is Record
+					====== RECORD TypePoint:
+						====== SYMBOLS TABLE: 
+							Var x is Double
+							Var y is Double
+						====== END TABLE
+
+				Var a is Integer
+				Var b is Integer
+				Var Point is Record
+					====== RECORD TypePoint:
+						====== SYMBOLS TABLE: 
+							Var x is Double
+							Var y is Double
+						====== END TABLE
+
+				Var tmp is Record
+					====== RECORD TypePoint:
+						====== SYMBOLS TABLE: 
+							Var x is Double
+							Var y is Double
+						====== END TABLE
+
+			====== END TABLE
+		====== PARAMETERS: a:Integer; b:Integer; Point:TypePoint; 
+		====== RETURN: Record
+		====== DEFINE: 
+			====== BEGIN BLOCK:
+			====== END BLOCK
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

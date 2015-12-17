@@ -1,0 +1,36 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		====== RECORD TPoint:
+			====== SYMBOLS TABLE: 
+				Var x is Double
+				Var y is Double
+			====== END TABLE
+
+		====== PROCEDURE P:
+			====== SYMBOLS TABLE: 
+				Var a is Integer
+				Var NewPoint is Record
+					====== RECORD TPoint:
+						====== SYMBOLS TABLE: 
+							Var x is Double
+							Var y is Double
+						====== END TABLE
+
+				Var b is Integer
+				Var Point is Record
+					====== RECORD TPoint:
+						====== SYMBOLS TABLE: 
+							Var x is Double
+							Var y is Double
+						====== END TABLE
+
+			====== END TABLE
+		====== PARAMETERS: a:Integer; b:Integer; Point:TPoint; 
+		====== DEFINE: 
+			====== BEGIN BLOCK:
+			====== END BLOCK
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

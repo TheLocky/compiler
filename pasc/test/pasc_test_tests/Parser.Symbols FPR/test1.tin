@@ -1,0 +1,5 @@
+var
+	a: record 
+	end;
+begin
+end.

@@ -1,0 +1,9 @@
+====== PROCEDURE main:
+====== DEFINE: 
+	====== BEGIN BLOCK:
+				arr
+			[ ]
+				i
+		[ ]
+			j
+	====== END BLOCK

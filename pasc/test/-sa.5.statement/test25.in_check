@@ -1,7 +1,0 @@
-====== BEGIN BLOCK:
-	====== REPEAT:
-		====== BREAK REPEAT LOOP
-	====== UNTIL:
-		true
-	====== END REPEAT
-====== END BLOCK

@@ -1,9 +1,0 @@
-====== SYMBOLS TABLE: 
-ta is Array of Array[Integer] of Integer with index type Char
-Var c is Array[Char] of Array[Integer] of Integer
-Var b is Array[SubRange of Integer] of Array[Char] of Double
-Var a is Array[Char] of Array[Integer] of Integer
-====== END TABLE
-
-====== BEGIN BLOCK:
-====== END BLOCK

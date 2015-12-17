@@ -1,0 +1,13 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		Var a is Record
+			====== RECORD anon:
+				====== SYMBOLS TABLE: 
+					Var a is Integer
+					Var b is Double
+				====== END TABLE
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

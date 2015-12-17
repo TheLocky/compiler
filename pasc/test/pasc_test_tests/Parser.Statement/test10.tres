@@ -1,0 +1,23 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		Var a is Integer
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+		====== CASE:
+			a
+		====== OF:
+			====== 1:
+					a
+				:=
+					0
+			====== 5:
+					a
+				:=
+					0
+			====== 7:
+					a
+				:=
+					0
+		====== END CASE
+	====== END BLOCK

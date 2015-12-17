@@ -1,0 +1,13 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		Var a is Array[Char] of Integer
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+				a
+			[ ]
+				(Char)
+					10
+		:=
+			10
+	====== END BLOCK

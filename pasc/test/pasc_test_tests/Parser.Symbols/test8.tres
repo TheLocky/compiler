@@ -1,0 +1,7 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		a is Integer SubRange = 1..10
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

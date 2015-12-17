@@ -1,0 +1,27 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		Var a is Record
+			====== RECORD anon:
+				====== SYMBOLS TABLE: 
+					Var a is Record
+						====== RECORD anon:
+							====== SYMBOLS TABLE: 
+								Var a is Record
+									====== RECORD anon:
+
+							====== END TABLE
+
+					Var b is Record
+						====== RECORD anon:
+							====== SYMBOLS TABLE: 
+								Var a is Record
+									====== RECORD anon:
+
+							====== END TABLE
+
+				====== END TABLE
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

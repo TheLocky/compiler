@@ -1,7 +1,0 @@
-====== BEGIN BLOCK:
-		bool
-	:=
-			a
-		<
-			2
-====== END BLOCK

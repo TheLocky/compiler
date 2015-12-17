@@ -1,0 +1,7 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		Const Var d is Double = 1.3500e+01
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

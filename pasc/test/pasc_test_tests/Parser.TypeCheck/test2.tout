@@ -1,0 +1,10 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		Var ch is Char
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+			ch
+		:=
+			65
+	====== END BLOCK

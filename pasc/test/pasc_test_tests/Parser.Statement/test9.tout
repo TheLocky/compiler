@@ -1,0 +1,19 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		Var a is Integer
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+		====== CASE:
+			a
+		====== OF:
+			====== 5000:
+					a
+				:=
+					2500
+			====== ELSE:
+					a
+				:=
+					0
+		====== END CASE
+	====== END BLOCK

@@ -1,0 +1,18 @@
+type
+	Point = Record 
+		x: Double;
+		y: Double;
+	end;
+
+function F(a: Integer; b: Integer; p: Point): Point;
+procedure P(a: Integer; b: Double);
+begin
+end
+	
+var
+	tmpP: Point;
+begin
+end
+
+begin
+end.

@@ -44,7 +44,7 @@ void startParser(char *file) {
     try {
         Parser parser(stream);
         SymProcedure *main = parser.Parse();
-        main->print();
+        main->print("");
     } catch (TokenException e) {
         e.print();
     } catch (SyntaxException e) {

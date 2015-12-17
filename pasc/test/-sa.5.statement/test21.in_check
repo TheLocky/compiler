@@ -1,8 +1,0 @@
-====== BEGIN BLOCK:
-	====== REPEAT:
-		====== BEGIN BLOCK:
-		====== END BLOCK
-	====== UNTIL:
-		true
-	====== END REPEAT
-====== END BLOCK

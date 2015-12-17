@@ -25,14 +25,12 @@ namespace Symbols {
         TypeArray, TypeConst, TypeVar, TypeAlias, TypeRecord, TypeProcedure, TypeFunction, TypeEnd
     };
 
-	
-
     class Symbol {
     public:
         string name;
 
 		Symbol(string name);
-        virtual void print() = 0;
+        virtual void print(string prefix) = 0;
 		virtual Type typeId() { return TypeEnd; };
     };
 
@@ -41,14 +39,14 @@ namespace Symbols {
         SymType(string name) : Symbol(name) { }
 
         virtual string getTypeStr() = 0;
-        virtual void print() = 0;
+        virtual void print(string prefix) = 0;
         virtual SymType *peelAlias() { return this; }
     };
 
 	class SymIdent : public Symbol {
 	public:
 		SymIdent(string name) : Symbol(name) { }
-		virtual void print() = 0;
+		virtual void print(string prefix) = 0;
 	};
 
     class SymVar : public SymIdent {
@@ -59,7 +57,7 @@ namespace Symbols {
 
         virtual Type typeId() { return TypeVar; };
         virtual string getTypeStr();
-        virtual void print();
+        virtual void print(string prefix);
     };
 
     class SymConst : public SymVar {
@@ -70,7 +68,7 @@ namespace Symbols {
 
         string getTypeStr();
 		Type typeId() { return TypeConst; };
-        void print();
+        void print(string prefix);
     };
 
     class SymTypeInt : public SymType {
@@ -79,7 +77,7 @@ namespace Symbols {
 
         string getTypeStr() { return "Integer"; }
 		Type typeId() { return TypeInt; };
-        void print() { printf("%s = system integer", name.c_str()); }
+        void print(string prefix) { printf("%s = system integer", name.c_str()); }
     };
 
     class SymTypeDouble : public SymType {
@@ -88,7 +86,7 @@ namespace Symbols {
 
         string getTypeStr() { return "Double"; }
 		Type typeId() { return TypeDouble; };
-        void print() { printf("%s = system double", name.c_str()); }
+        void print(string prefix) { printf("%s = system double", name.c_str()); }
     };
 
     class SymTypeChar : public SymType {
@@ -97,7 +95,7 @@ namespace Symbols {
 
         string getTypeStr() { return "Char"; }
 		Type typeId() { return TypeChar; };
-        void print() { printf("%s = system char", name.c_str()); }
+        void print(string prefix) { printf("%s = system char", name.c_str()); }
     };
 
     class SymTypeString : public SymType {
@@ -106,7 +104,7 @@ namespace Symbols {
 
         string getTypeStr() { return "String"; }
 		Type typeId() { return TypeString; };
-        void print() { printf("%s = system string", name.c_str()); }
+        void print(string prefix) { printf("%s = system string", name.c_str()); }
     };
 
     class SymTypeBool : public SymType {
@@ -115,7 +113,7 @@ namespace Symbols {
 
         string getTypeStr() { return "Boolean"; }
 		Type typeId() { return TypeBool; };
-        void print() { printf("%s = system bool", name.c_str()); }
+        void print(string prefix) { printf("%s = system bool", name.c_str()); }
     };
 
     class SymTypeSubRange : public SymType {
@@ -126,7 +124,7 @@ namespace Symbols {
 
         string getTypeStr();
 		Type typeId() { return TypeSubRange; };
-        void print();
+        void print(string prefix);
         virtual SymType *peelAlias() override { return left->type; }
     };
 
@@ -138,7 +136,7 @@ namespace Symbols {
 
         string getTypeStr();
 		Type typeId() { return TypePointer; };
-        void print();
+        void print(string prefix);
     };
 
     class SymArray : public SymType {
@@ -151,7 +149,7 @@ namespace Symbols {
 
         string getTypeStr();
 		Type typeId() { return TypeArray; };
-        void print();
+        void print(string prefix);
     };
 
     class SymAlias : public SymType {
@@ -162,7 +160,7 @@ namespace Symbols {
 
         string getTypeStr();
 		Type typeId() { return TypeAlias; };
-        void print();
+        void print(string prefix);
         virtual SymType *peelAlias() override { return type->peelAlias(); }
     };
 
@@ -183,7 +181,7 @@ namespace Symbols {
         SymProcedure(string name, SymTable *table);
 
 		Type typeId() { return TypeProcedure; };
-        virtual void print();
+        virtual void print(string prefix);
     };
 
     class SymFunction : public SymProcedure {
@@ -192,7 +190,7 @@ namespace Symbols {
         SymFunction(string name, SymTable *table);
 
 		Type typeId() { return TypeFunction; };
-        void print();
+        void print(string prefix);
     };
 
     class SymRecord : public SymType {
@@ -203,7 +201,7 @@ namespace Symbols {
 
 		string getTypeStr();
 		Type typeId() { return TypeRecord; };
-        void print();
+        void print(string prefix);
 
     };
 
@@ -220,6 +218,9 @@ private:
     std::unordered_map<string, Symbols::SymIdent *> varSymbols;
     int anon_count = 0;
 
+	bool contains(string name);
+
+
 public:
     SymTable *parent;
 
@@ -228,20 +229,45 @@ public:
 
     void addType(Symbols::SymType *type);
     void addSymbol(Symbols::SymIdent *symbol);
-    bool containsType(string name);
-    bool contains(string name);
-    Symbols::SymType *getType(string name);
+	bool containsType(string name);
+    Symbols::SymType *getType(Token name);
 	Symbols::SymIdent *getSymbol(string name);
-    Symbols::SymIdent *getSymbol(string name, Symbols::Type type);
-	Symbols::SymIdent *getSymbolNoThrow(string name);
+	Symbols::SymIdent *getSymbol(Token name);
+    Symbols::SymIdent *getSymbol(Token name, Symbols::Type type);
+	Symbols::SymIdent *getSymbolNoThrow(Token name);
+	Symbols::SymIdent *getSymbolNoThrow(Token name, Symbols::Type type);
 	template<class T> T getCastedSymbol(string name);
+	template<class T> T getCastedSymbol(Token name);
+	template<class T> T getCastedSymbol(Token name, Symbols::Type type);
+	template<class T> T getCastedSymbolNoThrow(Token name);
+	template<class T> T getCastedSymbolNoThrow(Token name, Symbols::Type type);
 
-    void print(bool printSystem);
+    void print(bool printSystem, string prefix);
 };
 
 template<class T>
 inline T SymTable::getCastedSymbol(string name) {
 	return dynamic_cast<T>(getSymbol(name));
+}
+
+template<class T>
+inline T SymTable::getCastedSymbol(Token name) {
+	return dynamic_cast<T>(getSymbol(name));
+}
+
+template<class T>
+inline T SymTable::getCastedSymbol(Token name, Symbols::Type type) {
+	return dynamic_cast<T>(getSymbol(name, type));
+}
+
+template<class T>
+inline T SymTable::getCastedSymbolNoThrow(Token name) {
+	return dynamic_cast<T>(getSymbolNoThrow(name));
+}
+
+template<class T>
+inline T SymTable::getCastedSymbolNoThrow(Token name, Symbols::Type type) {
+	return dynamic_cast<T>(getSymbolNoThrow(name, type));
 }
 
 #endif //PASCAL_COMPILER_SYMTABLE_H

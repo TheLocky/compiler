@@ -1,0 +1,17 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		====== RECORD rec:
+			====== SYMBOLS TABLE: 
+				Var a is String
+			====== END TABLE
+
+		Var c is Record
+			====== RECORD rec:
+				====== SYMBOLS TABLE: 
+					Var a is String
+				====== END TABLE
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

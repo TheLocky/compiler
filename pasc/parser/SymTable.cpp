@@ -6,6 +6,9 @@
 
 using namespace Symbols;
 
+const string TypeStr[] = { "type Integer", "type Double", "typeChar", "type String", "type Boolean", "type Sub Range",
+	"type Pointer", "type Array", "Const", "Variable", "", "Record", "Procedure", "Function" };
+
 namespace Symbols {
     SymTypeInt *GLOBAL_INT = new SymTypeInt("Integer");
     SymTypeChar *GLOBAL_CHAR = new SymTypeChar("Char");
@@ -67,32 +70,58 @@ bool SymTable::contains(string name) {
     return varSymbols.find(name) != varSymbols.end();
 }
 
-SymType *SymTable::getType(string name) {
-    if (containsType(name))
-        return typeSymbols[name];
-    else
-        return nullptr;
+Symbols::SymType * SymTable::getType(Token name) {
+    if (containsType(name.text))
+        return typeSymbols[name.text];
+	else if (parent)
+		return parent->getType(name);
+	else
+		throw SyntaxException(name, string("unknown type '") + name.text + "'");
 }
 
-SymIdent *SymTable::getSymbol(string name) {
+Symbols::SymIdent * SymTable::getSymbol(string name)
+{
 	if (contains(name))
 		return varSymbols[name];
+	else if (parent)
+		return parent->getSymbol(name);
 	else
 		return nullptr;
 }
 
-Symbols::SymIdent * SymTable::getSymbol(string name, Symbols::Type type)
+Symbols::SymIdent *SymTable::getSymbol(Token name) {
+	if (contains(name.text))
+		return varSymbols[name.text];
+	else if (parent)
+		return parent->getSymbol(name);
+	else
+		throw SyntaxException(name, string("undefined symbol '") + name.text + "'");
+}
+
+Symbols::SymIdent * SymTable::getSymbol(Token name, Symbols::Type type)
 {
-	if (contains(name))
-		return varSymbols[name];
+	auto symb = getSymbol(name);
+	if (symb->typeId() == type)
+		return symb;
+	else
+		throw SyntaxException(name, string("symbol '") + name.text + "' is not " + TypeStr[type]);
+}
+
+Symbols::SymIdent * SymTable::getSymbolNoThrow(Token name)
+{
+	if (contains(name.text))
+		return varSymbols[name.text];
+	else if (parent)
+		return parent->getSymbolNoThrow(name);
 	else
 		return nullptr;
 }
 
-Symbols::SymIdent * SymTable::getSymbolNoThrow(string name)
+Symbols::SymIdent * SymTable::getSymbolNoThrow(Token name, Symbols::Type type)
 {
-	if (contains(name))
-		return varSymbols[name];
+	auto symb = getSymbolNoThrow(name);
+	if (symb->typeId() == type)
+		return symb;
 	else
 		return nullptr;
 }
@@ -101,17 +130,23 @@ string SymVar::getTypeStr() {
     return string("Variable of ") + type->getTypeStr();
 }
 
-void SymVar::print() {
-    printf("Var %s is %s", name.c_str(), type->getTypeStr().c_str());
+void Symbols::SymVar::print(string prefix)
+{
+    printf("%sVar %s is %s", prefix.c_str(), name.c_str(), type->getTypeStr().c_str());
+	if (type->typeId() == TypeRecord) {
+		printf("\n");
+		type->print(prefix + "\t");
+	}
 }
 
 string SymConst::getTypeStr() {
     return type->getTypeStr();
 }
 
-void SymConst::print() {
-    printf("Const ");
-    SymVar::print();
+void Symbols::SymConst::print(string prefix)
+{
+    printf("%sConst ", prefix.c_str());
+    SymVar::print("");
     printf(" = %s", value.getStr().c_str());
 }
 
@@ -119,8 +154,9 @@ string SymTypeSubRange::getTypeStr() {
     return string("SubRange of ") + left->getTypeStr();
 }
 
-void SymTypeSubRange::print() {
-    printf("%s is %s SubRange = %s..%s", name.c_str(), left->getTypeStr().c_str(),
+void Symbols::SymTypeSubRange::print(string prefix)
+{
+    printf("%s%s is %s SubRange = %s..%s", prefix.c_str(), name.c_str(), left->getTypeStr().c_str(),
            left->value.getStr().c_str(), right->value.getStr().c_str());
 }
 
@@ -128,16 +164,18 @@ string SymTypePointer::getTypeStr() {
     return string("Pointer of ") + baseType->getTypeStr();
 }
 
-void SymTypePointer::print() {
-    printf("%s is Pointer of %s", name.c_str(), baseType->getTypeStr().c_str());
+void Symbols::SymTypePointer::print(string prefix)
+{
+    printf("%s%s is Pointer of %s", prefix.c_str(), name.c_str(), baseType->getTypeStr().c_str());
 }
 
 string SymArray::getTypeStr() {
     return string("Array[") + indexType->getTypeStr() + "] of " + arrayType->getTypeStr();
 }
 
-void SymArray::print() {
-    printf("%s is Array of %s with index type %s", name.c_str(), arrayType->getTypeStr().c_str(),
+void Symbols::SymArray::print(string prefix)
+{
+    printf("%s%s is Array of %s with index type %s", prefix.c_str(), name.c_str(), arrayType->getTypeStr().c_str(),
            indexType->getTypeStr().c_str());
 }
 
@@ -145,74 +183,75 @@ string SymAlias::getTypeStr() {
     return string("Alias of ") + type->getTypeStr();
 }
 
-void SymAlias::print() {
-    printf("%s is Alias of %s", name.c_str(), type->getTypeStr().c_str());
+void Symbols::SymAlias::print(string prefix)
+{
+    printf("%s%s is Alias of %s", prefix.c_str(), name.c_str(), type->getTypeStr().c_str());
 }
 
-void SymTable::print(bool printSystem) {
+void SymTable::print(bool printSystem, string prefix) {
     if (((typeSymbols.size() > 0 && printSystem) || (typeSymbols.size() > 5) && !printSystem)
             || varSymbols.size() > 0) {
-        printf("====== SYMBOLS TABLE: \n");
+        printf("%s====== SYMBOLS TABLE: \n", prefix.c_str());
         for (auto s : typeSymbols) {
             SymType *type = (SymType *) s.second;
             if ((type != GLOBAL_INT && type != GLOBAL_CHAR && type != GLOBAL_STRING &&
-                    type != GLOBAL_STRING && type != GLOBAL_BOOLEAN) || printSystem) {
-                type->print();
+                    type != GLOBAL_DOUBLE && type != GLOBAL_BOOLEAN) || printSystem) {
+                type->print(prefix + "\t");
                 printf("\n");
             }
         }
         for (auto s : varSymbols) {
-            SymVar *var = (SymVar *) s.second;
-            var->print();
+            auto var = s.second;
+            var->print(prefix + "\t");
             printf("\n");
         }
-        printf("====== END TABLE\n\n");
+        printf("%s====== END TABLE\n", prefix.c_str());
     }
 }
 
 SymProcedure::SymProcedure(string name, SymTable *table)  : SymIdent(name), localTable(table) {}
 
-void SymProcedure::print() {
-    printf("\n====== PROCEDURE %s:\n", name.c_str());
-    localTable->print(false);
+void Symbols::SymProcedure::print(string prefix)
+{
+    printf("%s====== PROCEDURE %s:\n", prefix.c_str(), name.c_str());
+    localTable->print(false, prefix + "\t");
     if (parameters.size() > 0) {
-        printf("====== PARAMETERS: ");
+        printf("%s====== PARAMETERS: ", prefix.c_str());
         for (Parameter param : parameters) {
-            printf("%s:%s ", param.name.c_str(), 
-				((SymVar*)localTable->getSymbol(param.name))->getTypeStr().c_str());
+			printf("%s:%s; ", param.name.c_str(),
+				((SymVar*)localTable->getSymbol(param.name))->type->name.c_str());
         }
         printf("\n");
     }
-    printf("====== DEFINE: \n");
-    def->print("\t");
-    printf("\n");
+    printf("%s====== DEFINE: \n", prefix.c_str());
+    def->print(prefix + "\t");
 }
 
 SymFunction::SymFunction(string name, SymTable *table) : SymProcedure(name, table) {}
 
-void SymFunction::print() {
-    printf("\n====== FUNCTION %s:\n", name.c_str());
-    localTable->print(false);
+void Symbols::SymFunction::print(string prefix)
+{
+    printf("%s====== FUNCTION %s:\n", prefix.c_str(), name.c_str());
+    localTable->print(false, prefix + "\t");
     if (parameters.size() > 0) {
-        printf("====== PARAMETERS: ");
+        printf("%s====== PARAMETERS: ", prefix.c_str());
         for (Parameter param : parameters) {
-            printf("%s:%s ", param.name.c_str(), 
-				((SymVar*)localTable->getSymbol(param.name))->getTypeStr().c_str());
+			printf("%s:%s; ", param.name.c_str(),
+				((SymVar*)localTable->getSymbol(param.name))->type->name.c_str());
         }
         printf("\n");
     }
-    printf("====== RETURN: %s", retType->getTypeStr().c_str());
-    printf("====== DEFINE: \n");
-    def->print("\t");
-    printf("\n");
+    printf("%s====== RETURN: %s\n", prefix.c_str(), retType->getTypeStr().c_str());
+    printf("%s====== DEFINE: \n", prefix.c_str());
+    def->print(prefix + "\t");
 }
 
 SymRecord::SymRecord(string name, SymTable *table) : SymType(name), localTable(table) {}
 
-void SymRecord::print() {
-    printf("\n====== RECORD %s:\n", name.c_str());
-    localTable->print(false);
-    printf("\n");
+void Symbols::SymRecord::print(string prefix)
+{
+    printf("%s====== RECORD %s:\n", prefix.c_str(), name.c_str());
+    localTable->print(false, prefix + "\t");
 }
 
 string SymRecord::getTypeStr() {

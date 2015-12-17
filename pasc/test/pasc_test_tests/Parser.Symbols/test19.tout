@@ -1,0 +1,8 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		int is Alias of Integer
+		Var a is Alias of Integer
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

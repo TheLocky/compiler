@@ -1,0 +1,12 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		Var a is Integer
+		Var b is Char
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+			a
+		:=
+			(Integer)
+				b
+	====== END BLOCK

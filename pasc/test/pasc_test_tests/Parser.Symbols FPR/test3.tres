@@ -1,0 +1,15 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		====== FUNCTION a:
+			====== SYMBOLS TABLE: 
+				Var Result is Integer
+			====== END TABLE
+		====== RETURN: Integer
+		====== DEFINE: 
+			====== BEGIN BLOCK:
+			====== END BLOCK
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

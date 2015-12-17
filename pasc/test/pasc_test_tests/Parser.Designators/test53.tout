@@ -1,0 +1,9 @@
+====== PROCEDURE main:
+====== DEFINE: 
+	====== BEGIN BLOCK:
+			b
+		>=
+				a
+			-
+				3
+	====== END BLOCK

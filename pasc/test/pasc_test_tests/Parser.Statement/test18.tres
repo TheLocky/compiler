@@ -1,0 +1,10 @@
+====== PROCEDURE main:
+====== DEFINE: 
+	====== BEGIN BLOCK:
+		====== WHILE:
+			true
+		====== DO:
+			====== BEGIN BLOCK:
+			====== END BLOCK
+		====== END WHILE
+	====== END BLOCK

@@ -1,0 +1,13 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		Var a is Boolean
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+		====== WHILE:
+			a
+		====== DO:
+			====== BEGIN BLOCK:
+			====== END BLOCK
+		====== END WHILE
+	====== END BLOCK

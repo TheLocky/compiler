@@ -1,0 +1,7 @@
+var
+	a: record
+		a: Integer;
+		b: Double; 
+	end;
+begin
+end.

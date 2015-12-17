@@ -1,0 +1,22 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		Var a is Integer
+		Var b is Integer
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+		====== IF:
+			(Boolean)
+					a
+				-
+					b
+		====== THEN:
+				a
+			:=
+				5
+		====== ELSE:
+				b
+			:=
+				5
+		====== END IF
+	====== END BLOCK

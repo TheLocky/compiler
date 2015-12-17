@@ -1,9 +1,0 @@
-====== SYMBOLS TABLE: 
-Var ch is Char
-====== END TABLE
-
-====== BEGIN BLOCK:
-		ch
-	:=
-		65
-====== END BLOCK

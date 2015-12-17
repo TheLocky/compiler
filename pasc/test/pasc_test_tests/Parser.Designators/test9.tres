@@ -1,0 +1,13 @@
+====== PROCEDURE main:
+====== DEFINE: 
+	====== BEGIN BLOCK:
+					a
+				[ ]
+					b
+			[ ]
+					c
+				[ ]
+					d
+		[ ]
+			i
+	====== END BLOCK

@@ -1,0 +1,13 @@
+type
+	TypePoint = Record 
+		x: Double;
+		y: Double;
+	end;
+function P(a: Integer; b: Integer; Point: TypePoint): TypePoint;
+var
+	tmp: TypePoint;
+begin
+end
+
+begin
+end.
