@@ -44,9 +44,8 @@ private:
     void ParseConstBlock();
     void ParseVarBlock();
     std::vector<Token> ParseIdentificatorsList();
-    void ParseProcedure();
-	std::vector<SymProcedure::Parameter> ParseProcedureParameters();
-    void ParseFunction();
+    void ParseCallDeclaration();
+	std::vector<SymProcedure::Parameter> ParseCallDeclParameters();
     SymRecord *ParseRecord(string name);
 
     int createCast(NodeExpr **left, NodeExpr **right);

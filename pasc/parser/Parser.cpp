@@ -324,8 +324,8 @@ void Parser::ParseConstBlock() {
 }
 
 void Parser::ParseVarBlock() {
-    auto namesList = ParseIdentificatorsList();
-    while (namesList.size() > 0) {
+    do {
+		auto namesList = ParseIdentificatorsList();
         requireToken(TK_COLON, ":");
         tokenizer.Next();
         SymType *type = ParseType("anon", false);
@@ -333,13 +333,13 @@ void Parser::ParseVarBlock() {
             currentTable->addSymbol(new SymVar(name.text, type));
         requireToken(TK_SEMICOLON, ";");
         tokenizer.Next();
-        namesList = ParseIdentificatorsList();
-    }
+	} while (tokenizer.Get().tokenType == TK_ID);
 }
 
 std::vector<Token> Parser::ParseIdentificatorsList() {
     std::vector<Token> result;
     Token name = tokenizer.Get();
+	requireToken(TK_ID, "<identificator>");
     while (name.tokenType == TK_ID) {
         result.push_back(name);
         if (tokenizer.Next().tokenType != TK_COMMA)
@@ -349,28 +349,39 @@ std::vector<Token> Parser::ParseIdentificatorsList() {
     return result;
 }
 
-void Parser::ParseProcedure() {
-	Token procedureName = tokenizer.Get();
+void Parser::ParseCallDeclaration() {
+	bool isFuntion = tokenizer.Get().tokenType == TK_FUNCTION;
+	Token callName = tokenizer.Next();
 	requireToken(TK_ID, "<identificator>");
 	tokenizer.Next();
 	SymTable *newTable = new SymTable(currentTable);
 	currentTable = newTable;
-	auto proc = new SymProcedure(procedureName.text, newTable);
+	auto call = isFuntion ? new SymFunction(callName.text, newTable) : new SymProcedure(callName.text, newTable);
 	if (tokenizer.Get().tokenType == TK_LB) {
 		tokenizer.Next();
-		proc->parameters = ParseProcedureParameters();
+		call->parameters = ParseCallDeclParameters();
 		requireToken(TK_RB, ")");
+		tokenizer.Next();
+	}
+	if (isFuntion) {
+		requireToken(TK_COLON, ":");
+		Token typeName = tokenizer.Next();
+		requireToken(TK_ID, "<identificator>");
+		((SymFunction *)call)->retType = currentTable->getType(typeName);
+		newTable->addSymbol(new SymVar("Result", ((SymFunction *)call)->retType));
 		tokenizer.Next();
 	}
 	requireToken(TK_SEMICOLON, ";");
 	tokenizer.Next();
+	currentTable->parent->addSymbol(call);
 	ParseDeclarationSection();
-	proc->def = ParseStmtCompound(nullptr);
+	call->def = ParseStmtCompound(nullptr);
 	currentTable = currentTable->parent;
-	currentTable->addSymbol(proc);
+	requireToken(TK_SEMICOLON, ";");
+	tokenizer.Next();
 }
 
-std::vector<SymProcedure::Parameter> Parser::ParseProcedureParameters() {
+std::vector<SymProcedure::Parameter> Parser::ParseCallDeclParameters() {
 	std::vector<SymProcedure::Parameter> params;
 	if (tokenizer.Get().tokenType != TK_RB) {
 		do {
@@ -408,33 +419,6 @@ std::vector<SymProcedure::Parameter> Parser::ParseProcedureParameters() {
 	return params;
 }
 
-void Parser::ParseFunction() {
-	Token functionName = tokenizer.Get();
-	requireToken(TK_ID, "<identificator>");
-	tokenizer.Next();
-	SymTable *newTable = new SymTable(currentTable);
-	currentTable = newTable;
-	auto func = new SymFunction(functionName.text, newTable);
-	if (tokenizer.Get().tokenType == TK_LB) {
-		tokenizer.Next();
-		func->parameters = ParseProcedureParameters();
-		requireToken(TK_RB, ")");
-		tokenizer.Next();
-	}
-	requireToken(TK_COLON, ":");
-	Token typeName = tokenizer.Next();
-	requireToken(TK_ID, "<identificator>");
-	func->retType = currentTable->getType(typeName);
-	tokenizer.Next();
-	requireToken(TK_SEMICOLON, ";");
-	tokenizer.Next();
-	ParseDeclarationSection();
-	func->def = ParseStmtCompound(nullptr);
-	newTable->addSymbol(new SymVar("Result", func->retType));
-	currentTable = currentTable->parent;
-	currentTable->addSymbol(func);
-}
-
 SymRecord * Parser::ParseRecord(string name)
 {
 	auto newTable = new SymTable(currentTable);
@@ -465,19 +449,29 @@ void Parser::ParseDeclarationSection() {
         checkTypeAllow = false;
         declarationSection = tokenizer.Next();
     }
-    while (checkToken(declarationSection.tokenType, lexList(TK_TYPE, TK_CONST, TK_VAR, TK_PROCEDURE, TK_FUNCTION, 0))) {
-        tokenizer.Next();
-        if (declarationSection.tokenType == TK_TYPE)
-            ParseTypeBlock();
-        else if (declarationSection.tokenType == TK_CONST)
-            ParseConstBlock();
-        else if (declarationSection.tokenType == TK_VAR)
-            ParseVarBlock();
-        else if (declarationSection.tokenType == TK_PROCEDURE)
-            ParseProcedure();
-        else if (declarationSection.tokenType == TK_FUNCTION)
-            ParseFunction();
-        declarationSection = tokenizer.Get();
+    while (true) {
+		switch (declarationSection.tokenType)
+		{
+		case TK_TYPE:
+			tokenizer.Next();
+			ParseTypeBlock();
+			break;
+		case TK_CONST:
+			tokenizer.Next();
+			ParseConstBlock();
+			break;
+		case TK_VAR:
+			tokenizer.Next();
+			ParseVarBlock();
+			break;
+		case TK_PROCEDURE:
+		case TK_FUNCTION:
+			ParseCallDeclaration();
+			break;
+		default:
+			return;
+		}
+		declarationSection = tokenizer.Get();
     }
 }
 
