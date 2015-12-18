@@ -20,6 +20,7 @@ public:
     StmtExpression(Statement *parent = nullptr) : Statement(parent) {}
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class StmtCompound : public Statement {
@@ -30,6 +31,7 @@ public:
 
     void add(Statement *statement) { stmtList.push_back(statement); }
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class StmtIf : public Statement {
@@ -41,6 +43,7 @@ public:
     StmtIf(Statement *parent = nullptr) : Statement(parent) { otherwise = nullptr; }
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class StmtCase : public Statement {
@@ -58,6 +61,7 @@ public:
 
     void add(Token left, Token right, Statement *stmt);
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class StmtLoop : public Statement {
@@ -65,6 +69,7 @@ public:
     StmtLoop(Statement *parent = nullptr) : Statement(parent) {}
 
     virtual void print(string prefix) = 0;
+	virtual void generate(AsmCode *code) = 0;
 };
 
 class StmtFor : public StmtLoop {
@@ -78,6 +83,7 @@ public:
     StmtFor(Statement *parent = nullptr) : StmtLoop(parent) {}
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class StmtWhile : public StmtLoop {
@@ -88,6 +94,7 @@ public:
     StmtWhile(Statement *parent = nullptr) : StmtLoop(parent){}
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class StmtRepeat : public StmtLoop {
@@ -98,6 +105,7 @@ public:
     StmtRepeat(Statement *parent = nullptr) : StmtLoop(parent) {}
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class StmtBreak : public Statement {
@@ -105,6 +113,7 @@ public:
     StmtBreak(Statement *parent) : Statement(parent) {}
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class StmtContinue: public Statement {
@@ -112,6 +121,7 @@ public:
     StmtContinue(Statement *parent) : Statement(parent) {}
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 

@@ -227,6 +227,21 @@ void Symbols::SymProcedure::print(string prefix)
     def->print(prefix + "\t");
 }
 
+string Symbols::SymProcedure::generate(AsmCode *code) {
+	return string();
+}
+
+string Symbols::SymProcedure::generate() {
+	auto asmCode = new AsmCode();
+	auto lblStart = new AsmLabel("start");
+	asmCode->add(lblStart);
+	def->generate(asmCode);
+	asmCode->add(push, 0);
+	asmCode->add(call, new AsmIdentificator("ExitProcess"));
+	asmCode->add(end, lblStart);
+	return asmCode->code();
+}
+
 SymFunction::SymFunction(string name, SymTable *table) : SymProcedure(name, table) {}
 
 void Symbols::SymFunction::print(string prefix)

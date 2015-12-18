@@ -699,7 +699,7 @@ Statement *Parser::ParseStmtRepeat(Statement *parent) {
 SymProcedure *Parser::Parse() {
     currentTable = new SymTable();
     currentTable->addSystemTypes();
-    auto mainProc = new SymProcedure("main", currentTable);
+    auto mainProc = new SymProcedure("start", currentTable);
     ParseDeclarationSection();
     mainProc->def = ParseStmtCompound();
     requireToken(TK_POINT, ".");

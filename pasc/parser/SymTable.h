@@ -7,11 +7,12 @@
 
 #include <typeinfo>
 #include <string>
-#include "tokenizer/Token.h"
-#include <unordered_map>
-#include "exception/Exception.h"
 #include <vector>
+#include <unordered_map>
+#include "tokenizer/Token.h"
+#include "exception/Exception.h"
 #include "StatementInterface.h"
+#include "generator/Asm.h"
 
 
 using std::string;
@@ -182,6 +183,8 @@ namespace Symbols {
 
 		Type typeId() { return TypeProcedure; };
         virtual void print(string prefix);
+		virtual string generate(AsmCode *code);
+		virtual string generate();
     };
 
     class SymFunction : public SymProcedure {

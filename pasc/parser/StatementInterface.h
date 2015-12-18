@@ -6,6 +6,7 @@
 #define PASCAL_COMPILER_STATEMENTINTERFACE_H
 
 #include <string>
+#include "generator/Asm.h"
 
 class Statement {
 public:
@@ -14,6 +15,7 @@ public:
     Statement(Statement *parent = nullptr) : parent(parent) {}
 
     virtual void print(std::string prefix) = 0;
+	virtual void generate(AsmCode *code) = 0;
 };
 
 #endif //PASCAL_COMPILER_STATEMENTINTERFACE_H
