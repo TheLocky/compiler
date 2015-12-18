@@ -15,6 +15,7 @@
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
+Generation/
 x64/
 x86/
 build/
@@ -78,6 +79,9 @@ ipch/
 *.psess
 *.vsp
 *.vspx
+*.vcxproj
+*.sln
+*.vcxproj.filters
 
 # TFS 2012 Local Workspace
 $tf/
@@ -195,8 +199,6 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 
-<<<<<<< HEAD
-=======
 ## CLion ignore
 >>>>>>> f6301876138b34665a39f378700ed84b1d191c92
 # Compiled Object files
