@@ -230,3 +230,6 @@ FakesAssemblies/
 
 #CLion
 .idea/
+
+#Tester
+*.tout
