@@ -1,7 +1,0 @@
-====== PROCEDURE main:
-	====== SYMBOLS TABLE: 
-		Const Var b is Char = 70
-	====== END TABLE
-====== DEFINE: 
-	====== BEGIN BLOCK:
-	====== END BLOCK

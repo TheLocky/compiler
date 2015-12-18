@@ -1,0 +1,9 @@
+var
+	r: record 
+		x: Double;
+		y: Double;
+	end;
+begin
+	r.x := 0.01;
+	r.y := 5.2;
+end.

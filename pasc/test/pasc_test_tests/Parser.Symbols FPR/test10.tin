@@ -7,7 +7,7 @@ type
 function F(a: Integer; b: Integer; p: Point): Point;
 procedure P(a: Integer; b: Double);
 begin
-end
+end;
 	
 var
 	tmpP: Point;

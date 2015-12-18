@@ -1,0 +1,23 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		Var r is Record
+			====== RECORD anon:
+				====== SYMBOLS TABLE: 
+					Var x is Double
+					Var y is Double
+				====== END TABLE
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+				r
+			.
+				x
+		:=
+			1.0000e-02
+				r
+			.
+				y
+		:=
+			5.2000e+00
+	====== END BLOCK

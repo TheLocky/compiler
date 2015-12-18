@@ -1,7 +1,0 @@
-====== PROCEDURE main:
-	====== SYMBOLS TABLE: 
-		a is Array of String with index type SubRange of Integer
-	====== END TABLE
-====== DEFINE: 
-	====== BEGIN BLOCK:
-	====== END BLOCK

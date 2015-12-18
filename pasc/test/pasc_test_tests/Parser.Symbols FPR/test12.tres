@@ -1,13 +1,20 @@
 ====== PROCEDURE main:
 	====== SYMBOLS TABLE: 
-		====== PROCEDURE foo:
+		====== FUNCTION foo:
+			====== SYMBOLS TABLE: 
+				Var Result is Integer
+			====== END TABLE
+		====== RETURN: Integer
 		====== DEFINE: 
 			====== BEGIN BLOCK:
 			====== END BLOCK
 
+		Var a is Integer
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:
-			foo
-		( )
+			a
+		:=
+				foo
+			( )
 	====== END BLOCK

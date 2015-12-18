@@ -1,7 +1,0 @@
-====== PROCEDURE main:
-	====== SYMBOLS TABLE: 
-		Const Var a is Integer = 10
-	====== END TABLE
-====== DEFINE: 
-	====== BEGIN BLOCK:
-	====== END BLOCK

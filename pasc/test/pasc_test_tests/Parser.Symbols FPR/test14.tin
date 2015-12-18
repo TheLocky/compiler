@@ -1,0 +1,12 @@
+procedure foo(a: Integer);
+begin
+	a := 10;
+end;
+
+var
+	b: Integer;
+begin
+	b := 0;
+	foo(b);
+end.
+	

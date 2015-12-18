@@ -1,0 +1,10 @@
+function foo(): Integer;
+begin
+end;
+
+var
+	a: Integer;
+
+begin
+	a := foo();
+end.

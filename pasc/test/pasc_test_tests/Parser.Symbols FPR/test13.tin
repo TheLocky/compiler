@@ -1,0 +1,10 @@
+type
+	rec = record
+		a: Integer;
+	end;
+
+var
+	b: rec;
+begin
+	b.a := 10;
+end.

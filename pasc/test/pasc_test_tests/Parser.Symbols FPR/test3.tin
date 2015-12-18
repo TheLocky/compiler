@@ -1,6 +1,6 @@
 function a() : Integer;
 begin 
-end
+end;
 
 begin
 end.

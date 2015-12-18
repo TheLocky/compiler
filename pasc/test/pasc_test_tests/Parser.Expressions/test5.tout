@@ -1,9 +1,0 @@
-====== PROCEDURE main:
-====== DEFINE: 
-	====== BEGIN BLOCK:
-				1
-			-
-				2
-		-
-			3
-	====== END BLOCK

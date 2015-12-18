@@ -1,7 +1,0 @@
-====== PROCEDURE main:
-	====== SYMBOLS TABLE: 
-		a is Alias of Integer
-	====== END TABLE
-====== DEFINE: 
-	====== BEGIN BLOCK:
-	====== END BLOCK

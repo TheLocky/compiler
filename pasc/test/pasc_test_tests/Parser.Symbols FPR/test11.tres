@@ -1,0 +1,13 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		====== PROCEDURE foo:
+		====== DEFINE: 
+			====== BEGIN BLOCK:
+			====== END BLOCK
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+			foo
+		( )
+	====== END BLOCK

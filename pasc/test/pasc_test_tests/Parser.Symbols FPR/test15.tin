@@ -1,0 +1,10 @@
+function foo(a: Integer): Integer;
+begin
+	Result := a + 1;
+end;
+
+var
+	a: Integer;
+begin
+	a := foo(a);
+end.

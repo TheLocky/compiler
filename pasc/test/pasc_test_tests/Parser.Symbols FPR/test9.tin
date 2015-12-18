@@ -7,7 +7,7 @@ function P(a: Integer; b: Integer; Point: TypePoint): TypePoint;
 var
 	tmp: TypePoint;
 begin
-end
+end;
 
 begin
 end.

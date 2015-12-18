@@ -1,0 +1,22 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		====== RECORD rec:
+			====== SYMBOLS TABLE: 
+				Var a is Integer
+			====== END TABLE
+
+		Var b is Record
+			====== RECORD rec:
+				====== SYMBOLS TABLE: 
+					Var a is Integer
+				====== END TABLE
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+				b
+			.
+				a
+		:=
+			10
+	====== END BLOCK

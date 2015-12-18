@@ -1,7 +1,0 @@
-====== PROCEDURE main:
-	====== SYMBOLS TABLE: 
-		Const Var c is String = some string
-	====== END TABLE
-====== DEFINE: 
-	====== BEGIN BLOCK:
-	====== END BLOCK

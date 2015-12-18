@@ -1,13 +1,25 @@
 ====== PROCEDURE main:
 	====== SYMBOLS TABLE: 
 		====== PROCEDURE foo:
+			====== SYMBOLS TABLE: 
+				Var a is Integer
+			====== END TABLE
+		====== PARAMETERS: a:Integer; 
 		====== DEFINE: 
 			====== BEGIN BLOCK:
+					a
+				:=
+					10
 			====== END BLOCK
 
+		Var b is Integer
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:
+			b
+		:=
+			0
 			foo
 		( )
+			b
 	====== END BLOCK

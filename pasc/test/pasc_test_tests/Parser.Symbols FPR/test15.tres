@@ -1,0 +1,28 @@
+====== PROCEDURE main:
+	====== SYMBOLS TABLE: 
+		====== FUNCTION foo:
+			====== SYMBOLS TABLE: 
+				Var Result is Integer
+				Var a is Integer
+			====== END TABLE
+		====== PARAMETERS: a:Integer; 
+		====== RETURN: Integer
+		====== DEFINE: 
+			====== BEGIN BLOCK:
+					Result
+				:=
+						a
+					+
+						1
+			====== END BLOCK
+
+		Var a is Integer
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+			a
+		:=
+				foo
+			( )
+				a
+	====== END BLOCK

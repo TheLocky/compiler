@@ -1,9 +1,0 @@
-====== PROCEDURE main:
-	====== SYMBOLS TABLE: 
-		Var i is Integer
-		Var j is Integer
-		Var k is Integer
-	====== END TABLE
-====== DEFINE: 
-	====== BEGIN BLOCK:
-	====== END BLOCK
