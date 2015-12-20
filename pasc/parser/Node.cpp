@@ -90,34 +90,91 @@ void ExprBinary::print(string prefix) {
         right->print(prefix + "\t");
 }
 
+void ExprBinary::generate(AsmCode * code) {
+	left->generate(code);
+	right->generate(code);
+	code->add(pop, ebx);
+	code->add(pop, eax);
+	switch (operatorToken.tokenType) {
+	case TK_ADD:
+		code->add(add, eax, ebx);
+		break;
+	case TK_SUB:
+		code->add(sub, eax, ebx);
+		break;
+	case TK_MUL:
+		code->add(mul, ebx);
+		break;
+	case TK_DIV:
+		code->add(_div, ebx);
+		break;
+	default:
+		break;
+	}
+	code->add(push, eax);
+}
+
 void ExprUnary::print(string prefix) {
     printf("%s%s\n", prefix.c_str(), operatorToken.text.c_str());
     if (right != NULL)
         right->print(prefix + "\t");
 }
 
+void ExprUnary::generate(AsmCode * code) {
+	right->generate(code);
+	switch (operatorToken.tokenType) {
+	case TK_SUB:
+		code->add(pop, eax);
+		code->add(neg, eax);
+		code->add(push, eax);
+		break;
+	default:
+		break;
+	}
+}
+
 void ExprIntConst::print(string prefix) {
     printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
+}
+
+void ExprIntConst::generate(AsmCode * code) {
+	code->add(push, operatorToken.intData);
 }
 
 void ExprRealConst::print(string prefix) {
     printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
 }
 
+void ExprRealConst::generate(AsmCode * code) {
+}
+
 void ExprStringConst::print(string prefix) {
     printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
+}
+
+void ExprStringConst::generate(AsmCode * code) {
 }
 
 void ExprCharConst::print(string prefix) {
     printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
 }
 
+void ExprCharConst::generate(AsmCode * code) {
+	code->add(push, operatorToken.intData);
+}
+
 void ExprBooleanConst::print(string prefix) {
     printf("%s%s\n", prefix.c_str(), operatorToken.getStr().c_str());
 }
 
+void ExprBooleanConst::generate(AsmCode * code) {
+}
+
 void ExprVariable::print(string prefix) {
     printf("%s%s\n", prefix.c_str(), operatorToken.text.c_str());
+}
+
+void ExprVariable::generate(AsmCode * code) {
 }
 
 void NodeArrayIndex::print(string prefix) {
@@ -128,12 +185,18 @@ void NodeArrayIndex::print(string prefix) {
         child->print(prefix + "\t");
 }
 
+void NodeArrayIndex::generate(AsmCode * code) {
+}
+
 void NodeRecordAccess::print(string prefix) {
     if (left != NULL)
         left->print(prefix + "\t");
     printf("%s%s\n", prefix.c_str(), ".");
     if (right != NULL)
         right->print(prefix + "\t");
+}
+
+void NodeRecordAccess::generate(AsmCode * code) {
 }
 
 void NodeFunc::print(string prefix) {
@@ -144,10 +207,37 @@ void NodeFunc::print(string prefix) {
         (*i)->print(prefix + "\t");
 }
 
+void NodeFunc::generate(AsmCode * code) {
+}
+
 void NodeWrite::print(string prefix) {
 	printf("%sWRITE ( )\n", prefix.c_str());
 	for (auto i = params.begin(); i != params.end(); i++)
 		(*i)->print(prefix + "\t");
+}
+
+void NodeWrite::generate(AsmCode * code) {
+	string format = "";
+	int size = 0;
+	for (int i = params.size() - 1; i >= 0; i--) {
+		switch (params[i]->type->typeId()) {
+		case Symbols::TypeInt:
+			format = "%d" + format;
+			params[i]->generate(code);
+			size += 4;
+			break;
+		case Symbols::TypeChar:
+			format = "%c" + format;
+			params[i]->generate(code);
+			size += 4;
+		default:
+			break;
+		}
+	}
+	auto fmt = code->add("fmt" +  std::to_string(code->counter()), db, format, 0);
+	code->add(push, fmt);
+	code->add(call, new AsmIdentificator("crt_printf"));
+	code->add(add, esp, size + 4);
 }
 
 void NodeCast::print(string prefix) {
@@ -157,10 +247,16 @@ void NodeCast::print(string prefix) {
     }
 }
 
+void NodeCast::generate(AsmCode * code) {
+}
+
 void NodeAssign::print(string prefix) {
     if (left != NULL)
         left->print(prefix + "\t");
     printf("%s%s\n", prefix.c_str(), ":=");
     if (right != NULL)
         right->print(prefix + "\t");
+}
+
+void NodeAssign::generate(AsmCode * code) {
 }

@@ -17,6 +17,7 @@ void StmtExpression::print(string prefix) {
 }
 
 void StmtExpression::generate(AsmCode * code) {
+	expression->generate(code);
 }
 
 void StmtCompound::print(string prefix) {
@@ -28,6 +29,8 @@ void StmtCompound::print(string prefix) {
 }
 
 void StmtCompound::generate(AsmCode * code) {
+	for (auto stmt : stmtList)
+		stmt->generate(code);
 }
 
 void StmtIf::print(string prefix) {

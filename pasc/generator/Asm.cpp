@@ -1,6 +1,6 @@
 #include "asm.h"
 
-const string AsmOperatorsCode[] = { "add", "sub", "mul", "div", "push", "pop", "call", "mov", "ret", "xor", "end" };
+const string AsmOperatorsCode[] = { "add", "sub", "mul", "div", "neg", "push", "pop", "call", "mov", "ret", "xor", "end" };
 const string AsmRegistersCode[] = { "eax", "ebx", "ecx", "edx", "esi", "edi", "esp", "ebp" };
 const string AsmTypesCode[] = { "db", "dd" };
 
@@ -194,6 +194,10 @@ void AsmCode::add(AsmOperators cmd, string s) {
 
 void AsmCode::add(AsmLabel * lbl) {
 	codeSection.push_back(new AsmLblCmd(lbl));
+}
+
+int AsmCode::counter() {
+	return nameCounter++;
 }
 
 string AsmCode::code() {

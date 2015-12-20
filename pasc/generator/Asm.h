@@ -5,7 +5,7 @@
 using std::string;
 using std::vector;
 
-enum AsmOperators { errOp = -1, add = 0, sub, mul, _div, push, pop, call, mov, ret, _xor, end };
+enum AsmOperators { errOp = -1, add = 0, sub, mul, _div, neg, push, pop, call, mov, ret, _xor, end };
 enum AsmRegisters { errReg = -1, eax = 0, ebx, ecx, edx, esi, edi, esp, ebp };
 enum AsmTypes { db = 0, dd };
 
@@ -126,6 +126,7 @@ public:
 
 class AsmCode {
 private:
+	int nameCounter = 0;
 	vector<AsmData *> dataSection;
 	vector<AsmCmd *> codeSection;
 
@@ -151,6 +152,8 @@ public:
 	void add(AsmOperators cmd, string s);
 	
 	void add(AsmLabel *lbl);
+
+	int counter();
 
 	string code();
 };

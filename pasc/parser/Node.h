@@ -11,6 +11,7 @@
 class Node {
 public:
     virtual void print(string prefix) = 0;
+	virtual void generate(AsmCode *code) = 0;
 };
 
 class NodeExpr : public Node {
@@ -19,6 +20,7 @@ public:
     Symbols::SymType *type;
 
     virtual void print(string prefix) = 0;
+	virtual void generate(AsmCode *code) = 0;
 
     friend class NodeAssign;
 };
@@ -31,6 +33,7 @@ public:
     ExprBinary(Token tk, NodeExpr *left, NodeExpr *right);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class ExprUnary : public NodeExpr {
@@ -40,6 +43,7 @@ public:
     ExprUnary(Token tk, NodeExpr *right);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class ExprIntConst : public NodeExpr {
@@ -47,6 +51,7 @@ public:
     ExprIntConst(Token tk, Symbols::SymType *symbol);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class ExprRealConst : public NodeExpr {
@@ -54,6 +59,7 @@ public:
     ExprRealConst(Token tk, Symbols::SymType *symbol);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class ExprStringConst : public NodeExpr {
@@ -61,6 +67,7 @@ public:
     ExprStringConst(Token tk, Symbols::SymType *symbol);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class ExprCharConst : public NodeExpr {
@@ -68,6 +75,7 @@ public:
     ExprCharConst(Token tk, Symbols::SymType *symbol);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class ExprBooleanConst : public NodeExpr {
@@ -75,6 +83,7 @@ public:
     ExprBooleanConst(Token tk, Symbols::SymType *symbol);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class ExprVariable : public NodeExpr {
@@ -82,6 +91,7 @@ public:
     ExprVariable(Token tk, Symbols::SymType *varType);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class NodeArrayIndex : public NodeExpr {
@@ -92,6 +102,7 @@ public:
     NodeArrayIndex(NodeExpr *parent, NodeExpr *child, Symbols::SymType *arrType);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class NodeRecordAccess : public NodeExpr {
@@ -102,6 +113,7 @@ public:
     NodeRecordAccess(NodeExpr *left, NodeExpr *right);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class NodeFunc : public NodeExpr {
@@ -112,6 +124,7 @@ public:
     NodeFunc(NodeExpr *parent, std::vector<NodeExpr*> params, Symbols::SymType *retType);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class NodeWrite : public NodeExpr {
@@ -121,6 +134,7 @@ public:
 	NodeWrite(std::vector<NodeExpr *> params);
 
 	void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class NodeCast : public NodeExpr {
@@ -130,6 +144,7 @@ public:
     NodeCast(NodeExpr *parameter, Symbols::SymType *castType);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 class NodeAssign : public Node {
@@ -140,6 +155,7 @@ public:
     NodeAssign(NodeExpr *left, NodeExpr *right);
 
     void print(string prefix);
+	void generate(AsmCode *code);
 };
 
 
