@@ -221,7 +221,9 @@ private:
     std::unordered_map<string, Symbols::SymIdent *> varSymbols;
     int anon_count = 0;
 
+	void toLower(string &s);
 	bool contains(string name);
+	bool containsType(string name);
 
 
 public:
@@ -230,9 +232,8 @@ public:
     SymTable(SymTable *parent = nullptr) : parent(parent) {}
     void addSystemTypes();
 
-    void addType(Symbols::SymType *type);
+    void addType(Symbols::SymType *type, Token tk = Token());
     void addSymbol(Symbols::SymIdent *symbol);
-	bool containsType(string name);
     Symbols::SymType *getType(Token name);
 	Symbols::SymIdent *getSymbol(string name);
 	Symbols::SymIdent *getSymbol(Token name);

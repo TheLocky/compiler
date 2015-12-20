@@ -91,8 +91,7 @@ int Token::getTokenType(LEX_TYPE lt) {
         case TK_DBLPOINT:
         case TK_POINT:
         case TK_COMMA: return 9;//"sep"
-		case TK_ERROR:
-		case TK_FORWARD: 
+		case TK_ERROR: 
 		default: return -1;
     }
 }

@@ -2,6 +2,7 @@
 // Created by xtpvx on 22.10.2015.
 //
 
+#include <algorithm>
 #include "SymTable.h"
 
 using namespace Symbols;
@@ -52,27 +53,42 @@ void SymTable::addSystemTypes() {
     addType(GLOBAL_BOOLEAN);
 }
 
-void SymTable::addType(SymType *symbol) {
-	//TODO: create throw
-    string name = containsType(symbol->name) ? symbol->name + std::to_string(++anon_count) : symbol->name;
-    typeSymbols[name] = symbol;
+void SymTable::addType(SymType *symbol, Token tk) {
+    string name = symbol->name;
+	toLower(name);
+	if (containsType(name)) {
+		throw SyntaxException(tk, "type '" + symbol->name + "' already defined");
+	} 
+	else
+		typeSymbols[name] = symbol;
 }
 
 void SymTable::addSymbol(SymIdent *symbol) {
-    varSymbols[symbol->name] = symbol;
+	string name = symbol->name;
+	toLower(name);
+    varSymbols[name] = symbol;
 }
 
 bool SymTable::containsType(string name) {
+	toLower(name);
     return typeSymbols.find(name) != typeSymbols.end();
 }
 
+void SymTable::toLower(string &s)
+{
+	std::transform(s.begin(), s.end(), s.begin(), ::tolower);
+}
+
 bool SymTable::contains(string name) {
+	toLower(name);
     return varSymbols.find(name) != varSymbols.end();
 }
 
 Symbols::SymType * SymTable::getType(Token name) {
-    if (containsType(name.text))
-        return typeSymbols[name.text];
+	string tName = name.text;
+	toLower(tName);
+    if (containsType(tName))
+        return typeSymbols[tName];
 	else if (parent)
 		return parent->getType(name);
 	else
@@ -81,6 +97,7 @@ Symbols::SymType * SymTable::getType(Token name) {
 
 Symbols::SymIdent * SymTable::getSymbol(string name)
 {
+	toLower(name);
 	if (contains(name))
 		return varSymbols[name];
 	else if (parent)
@@ -90,10 +107,12 @@ Symbols::SymIdent * SymTable::getSymbol(string name)
 }
 
 Symbols::SymIdent *SymTable::getSymbol(Token name) {
-	if (contains(name.text))
-		return varSymbols[name.text];
+	string sName = name.text;
+	toLower(sName);
+	if (contains(sName))
+		return varSymbols[sName];
 	else if (parent)
-		return parent->getSymbol(name);
+		return parent->getSymbol(sName);
 	else
 		throw SyntaxException(name, string("undefined symbol '") + name.text + "'");
 }
@@ -109,8 +128,10 @@ Symbols::SymIdent * SymTable::getSymbol(Token name, Symbols::Type type)
 
 Symbols::SymIdent * SymTable::getSymbolNoThrow(Token name)
 {
-	if (contains(name.text))
-		return varSymbols[name.text];
+	string sName = name.text;
+	toLower(sName);
+	if (contains(sName))
+		return varSymbols[sName];
 	else if (parent)
 		return parent->getSymbolNoThrow(name);
 	else
@@ -133,7 +154,7 @@ string SymVar::getTypeStr() {
 void Symbols::SymVar::print(string prefix)
 {
     printf("%sVar %s is %s", prefix.c_str(), name.c_str(), type->getTypeStr().c_str());
-	if (type->typeId() == TypeRecord) {
+	if (type->typeId() == TypeRecord && type->name.empty()) {
 		printf("\n");
 		type->print(prefix + "\t");
 	}
@@ -151,41 +172,41 @@ void Symbols::SymConst::print(string prefix)
 }
 
 string SymTypeSubRange::getTypeStr() {
-    return string("SubRange of ") + left->getTypeStr();
+    return name.empty() ? "SubRange of " + left->getTypeStr() : name;
 }
 
 void Symbols::SymTypeSubRange::print(string prefix)
 {
-    printf("%s%s is %s SubRange = %s..%s", prefix.c_str(), name.c_str(), left->getTypeStr().c_str(),
+    printf("%sType %s is %s SubRange [%s..%s]", prefix.c_str(), name.c_str(), left->getTypeStr().c_str(),
            left->value.getStr().c_str(), right->value.getStr().c_str());
 }
 
 string SymTypePointer::getTypeStr() {
-    return string("Pointer of ") + baseType->getTypeStr();
+    return name.empty() ? "Pointer of " + baseType->getTypeStr() : name;
 }
 
 void Symbols::SymTypePointer::print(string prefix)
 {
-    printf("%s%s is Pointer of %s", prefix.c_str(), name.c_str(), baseType->getTypeStr().c_str());
+    printf("%sType %s is Pointer of %s", prefix.c_str(), name.c_str(), baseType->getTypeStr().c_str());
 }
 
 string SymArray::getTypeStr() {
-    return string("Array[") + indexType->getTypeStr() + "] of " + arrayType->getTypeStr();
+    return name.empty() ? string("Array[") + indexType->getTypeStr() + "] of " + arrayType->getTypeStr() : name;
 }
 
 void Symbols::SymArray::print(string prefix)
 {
-    printf("%s%s is Array of %s with index type %s", prefix.c_str(), name.c_str(), arrayType->getTypeStr().c_str(),
+    printf("%sType %s is Array of %s with index type %s", prefix.c_str(), name.c_str(), arrayType->getTypeStr().c_str(),
            indexType->getTypeStr().c_str());
 }
 
 string SymAlias::getTypeStr() {
-    return string("Alias of ") + type->getTypeStr();
+    return name.empty() ? string("Alias of ") + type->getTypeStr() : name;
 }
 
 void Symbols::SymAlias::print(string prefix)
 {
-    printf("%s%s is Alias of %s", prefix.c_str(), name.c_str(), type->getTypeStr().c_str());
+    printf("%sType %s is Alias of %s", prefix.c_str(), name.c_str(), type->getTypeStr().c_str());
 }
 
 void SymTable::print(bool printSystem, string prefix) {

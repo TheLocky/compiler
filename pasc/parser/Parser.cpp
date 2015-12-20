@@ -189,10 +189,8 @@ void Parser::ParseTypeBlock() {
     while (name.tokenType == TK_ID) {
         tokenizer.Next();
         requireToken(TK_CE, "=");
-        if (currentTable->containsType(name.text))
-            throw SyntaxException(name.strNum, name.strPos, string("type'") + name.text + "'is already defined");
         tokenizer.Next();
-        currentTable->addType(ParseType(name.text, true));
+        currentTable->addType(ParseType(name.text, true), name);
         requireToken(TK_SEMICOLON, ";");
         name = tokenizer.Next();
     }
@@ -211,7 +209,7 @@ SymType *Parser::ParseType(string name, bool createAlias) {
     } else if (checkToken(typeName.tokenType, lexList(TK_INT, TK_CHAR, 0))) {
         return ParseTypeSubRange(name);
     } else if (typeName.tokenType == TK_POINTER) {
-        return new SymTypePointer(name, ParseType("anon", false));
+        return new SymTypePointer(name, ParseType("", false));
     } else if (typeName.tokenType == TK_RECORD) {
         return ParseRecord(name);
     }
@@ -226,7 +224,7 @@ SymArray *Parser::ParseTypeArray(string name) {
     SymType *indexType = GLOBAL_INT;
     if (tokenizer.Get().tokenType == TK_LSQB) {
         tokenizer.Next();
-        indexType = ParseType("anon", false);
+        indexType = ParseType("", false);
         if (indexType->peelAlias()->typeId() != TypeInt && indexType->peelAlias()->typeId() != TypeChar)
             throw SyntaxException(tokenizer.Get().strNum, tokenizer.Get().strPos, "invalid array index type");
         dynamic = false;
@@ -236,15 +234,15 @@ SymArray *Parser::ParseTypeArray(string name) {
     requireToken(TK_OF, "of");
     tokenizer.Next();
     if (tokenizer.Get().tokenType == TK_ARRAY)
-        return new SymArray(name, ParseTypeArray("anon"), indexType, dynamic);
-    return new SymArray(name, ParseType("anon", false), indexType, dynamic);
+        return new SymArray(name, ParseTypeArray(""), indexType, dynamic);
+    return new SymArray(name, ParseType("", false), indexType, dynamic);
 }
 
 SymTypeSubRange *Parser::ParseTypeSubRange(string name) {
-    SymConst *left = ParseConstantExpr("anon", lexList(TK_INT, TK_CHAR, 0));
+    SymConst *left = ParseConstantExpr("", lexList(TK_INT, TK_CHAR, 0));
     requireToken(TK_DBLPOINT, "..");
     tokenizer.Next();
-    SymConst *right = ParseConstantExpr("anon", lexList(TK_INT, TK_CHAR, 0));
+    SymConst *right = ParseConstantExpr("", lexList(TK_INT, TK_CHAR, 0));
     if (left->type->typeId() != right->type->typeId())
         throw SyntaxException(tokenizer.Get(), "const expression in range must be equal type");
     if (left->value.intData >= right->value.intData)
@@ -328,7 +326,7 @@ void Parser::ParseVarBlock() {
 		auto namesList = ParseIdentificatorsList();
         requireToken(TK_COLON, ":");
         tokenizer.Next();
-        SymType *type = ParseType("anon", false);
+        SymType *type = ParseType("", false);
         for (auto name : namesList)
             currentTable->addSymbol(new SymVar(name.text, type));
         requireToken(TK_SEMICOLON, ";");
@@ -433,7 +431,7 @@ SymRecord * Parser::ParseRecord(string name)
 		auto varList = ParseIdentificatorsList();
 		requireToken(TK_COLON, ":");
 		tokenizer.Next();
-		SymType *type = ParseType("anon", false);
+		SymType *type = ParseType("", false);
 		for (auto var : varList)
 			newTable->addSymbol(new SymVar(var.text, type));
 		if (tokenizer.Get().tokenType != TK_END) {
