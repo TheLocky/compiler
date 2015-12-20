@@ -14,12 +14,12 @@ using std::string;
 enum LEX_TYPE {
     TK_ERROR = -1,
     TK_ID = 1, TK_INT, TK_REAL, TK_HEX, TK_CHAR, TK_STRING,
-    TK_PROGRAM, TK_BEGIN, TK_END, TK_FWD, TK_FUNCTION, TK_PROCEDURE, TK_RECORD, TK_EXIT,
+    TK_PROGRAM, TK_BEGIN, TK_END, TK_FWD, TK_FUNCTION, TK_PROCEDURE, TK_RECORD, TK_EXIT, TK_WRITE,
     TK_IF, TK_THEN, TK_ELSE, TK_FOR, TK_TO, TK_DOWNTO, TK_WHILE, TK_DO, TK_REPEAT, TK_UNTIL, TK_BREAK, TK_CONTINUE, TK_CASE,
-    TK_VAR, TK_TYPE, TK_ARRAY, TK_OF, TK_CONST, TK_TRUE, TK_FALSE, TK_FORWARD,
+    TK_VAR, TK_TYPE, TK_ARRAY, TK_OF, TK_CONST, TK_TRUE, TK_FALSE,
     TK_AND, TK_NOT, TK_OR, TK_XOR, TK_CGT, TK_CLT, TK_CGE, TK_CLE, TK_CE, TK_CNE,
     TK_DIV, TK_MOD, TK_ADD, TK_SUB, TK_MUL, TK_DIV_S, TK_ADD_E, TK_SUB_E, TK_MUL_E, TK_DIV_E, TK_ASSIGN,
-    TK_POINTER, TK_ADDR,
+    TK_POINTER, TK_ADDR, 
     TK_RB, TK_LB, TK_RSQB, TK_LSQB, TK_SEMICOLON, TK_COLON, TK_DBLPOINT, TK_POINT, TK_COMMA
 };
 
@@ -45,7 +45,7 @@ static keyWord keyWords[] {
         {"type", TK_TYPE}, {"var", TK_VAR}, {"while", TK_WHILE}, {"break", TK_BREAK}, {"continue", TK_CONTINUE},
         {"case", TK_CASE}, {"downto", TK_DOWNTO}, {"exit", TK_EXIT}, {"repeat", TK_REPEAT}, {"until", TK_UNTIL},
         {"and", TK_AND}, {"div", TK_DIV}, {"mod", TK_MOD}, {"not", TK_NOT}, {"or", TK_OR}, {"xor", TK_XOR},
-        {"true", TK_TRUE}, {"false", TK_FALSE}, {"forward", TK_FORWARD}
+        {"true", TK_TRUE}, {"false", TK_FALSE}, {"write", TK_WRITE} 
 };
 
 static specialDbl specialDbls [] {
