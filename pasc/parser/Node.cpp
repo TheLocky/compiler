@@ -68,6 +68,11 @@ NodeFunc::NodeFunc(NodeExpr *parent, std::vector<NodeExpr*> params, Symbols::Sym
     type = retType;
 }
 
+NodeWrite::NodeWrite(std::vector<NodeExpr*> params) {
+	operatorToken.tokenType = TK_WRITE;
+	this->params = params;
+}
+
 NodeCast::NodeCast(NodeExpr *parameter, Symbols::SymType *castType) : parameter(parameter) {
     type = castType;
 }
@@ -137,6 +142,12 @@ void NodeFunc::print(string prefix) {
     printf("%s%s\n", prefix.c_str(), "( )");
     for (auto i = params.begin(); i != params.end(); i++)
         (*i)->print(prefix + "\t");
+}
+
+void NodeWrite::print(string prefix) {
+	printf("%sWRITE ( )\n", prefix.c_str());
+	for (auto i = params.begin(); i != params.end(); i++)
+		(*i)->print(prefix + "\t");
 }
 
 void NodeCast::print(string prefix) {

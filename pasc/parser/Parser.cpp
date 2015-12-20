@@ -111,6 +111,14 @@ NodeExpr *Parser::ParseFactor() {
             result = new ExprBooleanConst(factor, GLOBAL_BOOLEAN);
             tokenizer.Next();
         }
+		else if (factor.tokenType = TK_WRITE) {
+			tokenizer.Next();
+			requireToken(TK_LB, "(");
+			tokenizer.Next();
+			result = new NodeWrite(ParseParameters());
+			requireToken(TK_RB, ")");
+			tokenizer.Next();
+		}
         else {
             return nullptr;
         }

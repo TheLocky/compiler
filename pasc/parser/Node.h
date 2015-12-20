@@ -105,13 +105,22 @@ public:
 };
 
 class NodeFunc : public NodeExpr {
-protected:
+private:
     NodeExpr *parent;
     std::vector<NodeExpr*> params;
 public:
     NodeFunc(NodeExpr *parent, std::vector<NodeExpr*> params, Symbols::SymType *retType);
 
     void print(string prefix);
+};
+
+class NodeWrite : public NodeExpr {
+public:
+	std::vector<NodeExpr*> params;
+
+	NodeWrite(std::vector<NodeExpr *> params);
+
+	void print(string prefix);
 };
 
 class NodeCast : public NodeExpr {
