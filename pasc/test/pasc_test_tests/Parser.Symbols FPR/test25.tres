@@ -1,0 +1,17 @@
+====== PROCEDURE start:
+	====== SYMBOLS TABLE: 
+		====== FUNCTION a:
+			====== SYMBOLS TABLE: 
+				Var Result is Integer
+				Var a is Integer
+			====== END TABLE
+		====== PARAMETERS: a:Integer; 
+		====== RETURN: Integer
+		====== DEFINE: 
+			====== BEGIN BLOCK:
+			====== END BLOCK
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

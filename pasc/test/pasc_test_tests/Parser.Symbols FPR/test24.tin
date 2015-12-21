@@ -1,0 +1,13 @@
+type hello = record d : double end;
+
+function A(a : integer) : hello; 
+var b : hello;
+type hello = record a : integer; end;
+var a : hello;
+begin
+	resulT := b;
+	RESULT := Result + b;
+end;
+
+begin
+end.

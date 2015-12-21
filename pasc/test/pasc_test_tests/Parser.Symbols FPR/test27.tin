@@ -1,0 +1,12 @@
+type mytype = record a : array of integer end;
+
+function a(a : integer) : mytype;
+var b : array of integer;
+var c : record a : array of integer; end;
+begin
+	//c.a := b;
+	result.a := c.a+b;
+end;
+
+begin
+end.

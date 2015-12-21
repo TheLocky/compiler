@@ -1,0 +1,12 @@
+type hello = integer;
+
+procedure A(a : integer);
+var b : hello;
+type hello = record a : integer end;
+var a : hello;
+begin
+	b := a;
+end;
+
+begin
+end.

@@ -1,0 +1,22 @@
+====== PROCEDURE start:
+	====== SYMBOLS TABLE: 
+		Type hello is Alias of Integer
+		====== PROCEDURE A:
+			====== SYMBOLS TABLE: 
+				Type hello is Alias of Double
+				Var a is hello
+				Var b is hello
+			====== END TABLE
+		====== PARAMETERS: a:hello; 
+		====== DEFINE: 
+			====== BEGIN BLOCK:
+					b
+				:=
+					(Integer)
+						a
+			====== END BLOCK
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

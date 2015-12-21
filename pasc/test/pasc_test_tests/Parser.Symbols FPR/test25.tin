@@ -1,0 +1,6 @@
+function a(a : integer) : integer;
+begin
+end;
+
+begin
+end.

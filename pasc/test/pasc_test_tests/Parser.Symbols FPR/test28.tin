@@ -1,0 +1,8 @@
+procedure a();
+begin
+end;
+
+var b: integer;
+begin
+	b := a();
+end.
