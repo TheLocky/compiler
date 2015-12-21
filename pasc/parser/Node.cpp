@@ -106,6 +106,7 @@ void ExprBinary::generate(AsmCode * code) {
 		code->add(mul, ebx);
 		break;
 	case TK_DIV:
+		code->add(_xor, edx, edx);
 		code->add(_div, ebx);
 		break;
 	default:
@@ -217,27 +218,29 @@ void NodeWrite::print(string prefix) {
 }
 
 void NodeWrite::generate(AsmCode * code) {
-	string format = "";
-	int size = 0;
-	for (int i = params.size() - 1; i >= 0; i--) {
-		switch (params[i]->type->typeId()) {
-		case Symbols::TypeInt:
-			format = "%d" + format;
-			params[i]->generate(code);
-			size += 4;
-			break;
-		case Symbols::TypeChar:
-			format = "%c" + format;
-			params[i]->generate(code);
-			size += 4;
-		default:
-			break;
+	if (params.size() > 0) {
+		string format = "";
+		int size = 0;
+		for (int i = params.size() - 1; i >= 0; i--) {
+			switch (params[i]->type->typeId()) {
+			case Symbols::TypeInt:
+				format = "%d" + format;
+				params[i]->generate(code);
+				size += 4;
+				break;
+			case Symbols::TypeChar:
+				format = "%c" + format;
+				params[i]->generate(code);
+				size += 4;
+			default:
+				break;
+			}
 		}
+		auto fmt = code->add("fmt" + std::to_string(code->counter()), db, format, 0);
+		code->add(push, fmt);
+		code->add(call, new AsmIdentificator("crt_printf"));
+		code->add(add, esp, size + 4);
 	}
-	auto fmt = code->add("fmt" +  std::to_string(code->counter()), db, format, 0);
-	code->add(push, fmt);
-	code->add(call, new AsmIdentificator("crt_printf"));
-	code->add(add, esp, size + 4);
 }
 
 void NodeCast::print(string prefix) {
@@ -248,6 +251,16 @@ void NodeCast::print(string prefix) {
 }
 
 void NodeCast::generate(AsmCode * code) {
+	auto expr = dynamic_cast<NodeExpr *>(parameter);
+	if (expr) {
+		auto baseType = expr->type;
+		if (baseType->typeId() == Symbols::TypeChar && type->typeId() == Symbols::TypeInt) {
+			expr->generate(code);
+		}
+		if (baseType->typeId() == Symbols::TypeInt && type->typeId() == Symbols::TypeChar) {
+			expr->generate(code);
+		}
+	}
 }
 
 void NodeAssign::print(string prefix) {
