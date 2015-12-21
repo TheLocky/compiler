@@ -236,3 +236,4 @@ FakesAssemblies/
 #Tester
 *.tout
 *.tester
+*.asm
