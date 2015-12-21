@@ -1,0 +1,3 @@
+begin
+	write(15 div 6 * 35);
+end.

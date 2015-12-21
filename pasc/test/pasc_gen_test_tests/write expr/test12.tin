@@ -1,0 +1,3 @@
+begin
+	write(35 * 200 + 4 div 2);
+end.

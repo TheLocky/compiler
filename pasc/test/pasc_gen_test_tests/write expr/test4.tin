@@ -1,0 +1,3 @@
+begin
+	write('T','-',90);
+end.
