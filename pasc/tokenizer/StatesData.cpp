@@ -26,7 +26,7 @@ void States::Build() {
 }
 
 void States::BuildNumbers() {
-    //для всех чисел
+    //All number
     for (int i = '0'; i <= '9'; ++i) {
         Table[i][ST_BEGIN] = ST_NUMBER_ALL;
         Table[i][ST_NUMBER_ALL] = ST_NUMBER_ALL;
@@ -38,14 +38,14 @@ void States::BuildNumbers() {
         Table[i][ST_NUMBER_EXP_VAL] = ST_NUMBER_EXP_VAL;
         Table[i][ST_NUMBER_EXP_SIGN] = ST_NUMBER_EXP_VAL;
     }
-    //число с плавающей точкой
+    //Double number
     Table['.'][ST_NUMBER_ALL] = ST_NUMBER_DBL_FIRST; //1.
     for (int i = 0; i < '0'; ++i)
         Table[i][ST_NUMBER_DBL_FIRST] = ST_NOFRACT;
     for (int i = '9'+1; i < CHAR_COUNT; ++i)
         Table[i][ST_NUMBER_DBL_FIRST] = ST_NOFRACT;
-    Table['.'][ST_NUMBER_DBL_FIRST] = ST_DBLPOINT; //Исключение разделителя
-    //число с экспонентой
+    Table['.'][ST_NUMBER_DBL_FIRST] = ST_DBLPOINT; //separator ..
+    //Exp number
     Table['E'][ST_NUMBER_ALL] = ST_NUMBER_EXP;
     Table['e'][ST_NUMBER_ALL] = ST_NUMBER_EXP;
     Table['E'][ST_NUMBER_DBL] = ST_NUMBER_EXP;
@@ -60,7 +60,7 @@ void States::BuildNumbers() {
     }
     Table['+'][ST_NUMBER_EXP] = ST_NUMBER_EXP_SIGN;
     Table['-'][ST_NUMBER_EXP] = ST_NUMBER_EXP_SIGN;
-    //HEX-числа
+    //HEX-numbers
     Table['$'][ST_BEGIN] = ST_NUMBER_HEX;
     for (int i = 'A'; i <= 'F'; ++i) {
         Table[i][ST_NUMBER_HEX] = ST_NUMBER_HEX;
@@ -77,15 +77,15 @@ void States::BuildNumbers() {
 }
 
 void States::BuildIdents() {
-    for (int i = 'A'; i < 'Z'; ++i) {
+    for (int i = 'A'; i <= 'Z'; ++i) {
         Table[i][ST_BEGIN] = ST_IDENT;
         Table[i][ST_IDENT] = ST_IDENT;
     }
-    for (int i = 'a'; i < 'z'; ++i) {
+    for (int i = 'a'; i <= 'z'; ++i) {
         Table[i][ST_BEGIN] = ST_IDENT;
         Table[i][ST_IDENT] = ST_IDENT;
     }
-    for (int i = '0'; i < '9'; ++i) {
+    for (int i = '0'; i <= '9'; ++i) {
         Table[i][ST_IDENT] = ST_IDENT;
     }
 }
