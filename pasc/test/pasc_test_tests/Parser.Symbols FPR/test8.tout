@@ -1,4 +1,4 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
 		====== RECORD TPoint:
 			====== SYMBOLS TABLE: 
@@ -10,20 +10,8 @@
 			====== SYMBOLS TABLE: 
 				Var a is Integer
 				Var NewPoint is Record
-					====== RECORD TPoint:
-						====== SYMBOLS TABLE: 
-							Var x is Double
-							Var y is Double
-						====== END TABLE
-
 				Var b is Integer
 				Var Point is Record
-					====== RECORD TPoint:
-						====== SYMBOLS TABLE: 
-							Var x is Double
-							Var y is Double
-						====== END TABLE
-
 			====== END TABLE
 		====== PARAMETERS: a:Integer; b:Integer; Point:TPoint; 
 		====== DEFINE: 

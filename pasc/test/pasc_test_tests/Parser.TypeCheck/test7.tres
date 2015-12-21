@@ -1,4 +1,4 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
 		Var arr is Array[Char] of Double
 	====== END TABLE

@@ -1,7 +1,7 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
-		b is Alias of Array[Integer] of Integer
-		a is Array of Integer with index type Integer
+		Type b is Alias of a
+		Type a is Array of Integer with index type Integer
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:

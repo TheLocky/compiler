@@ -1,0 +1,12 @@
+====== PROCEDURE start:
+	====== SYMBOLS TABLE: 
+		====== PROCEDURE r:
+		====== DEFINE: 
+			====== BEGIN BLOCK:
+				r
+			====== END BLOCK
+
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+	====== END BLOCK

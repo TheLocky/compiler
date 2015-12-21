@@ -1,6 +1,6 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
-		a is Array of Array[Integer] of Char with index type SubRange of Char
+		Type a is Array of Array[Integer] of Char with index type SubRange of Char
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:

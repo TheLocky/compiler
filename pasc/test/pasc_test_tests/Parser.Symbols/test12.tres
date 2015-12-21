@@ -1,4 +1,4 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
 		Const Var b is Char = 70
 	====== END TABLE

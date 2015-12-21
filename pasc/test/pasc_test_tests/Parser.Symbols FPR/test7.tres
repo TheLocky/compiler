@@ -1,11 +1,11 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
 		====== RECORD Rec:
 			====== SYMBOLS TABLE: 
 				Var a is Integer
 				Var b is Integer
 				Var c is Record
-					====== RECORD anon:
+					====== RECORD :
 						====== SYMBOLS TABLE: 
 							Var a is Integer
 							Var b is Integer
@@ -14,7 +14,7 @@
 			====== END TABLE
 
 		Var a is Record
-			====== RECORD anon:
+			====== RECORD :
 				====== SYMBOLS TABLE: 
 					Var a is Integer
 					Var b is Double

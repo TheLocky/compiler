@@ -1,6 +1,6 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
-		a is Alias of Integer
+		Type a is Alias of Integer
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:

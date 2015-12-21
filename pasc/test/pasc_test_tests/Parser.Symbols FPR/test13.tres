@@ -1,4 +1,4 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
 		====== RECORD rec:
 			====== SYMBOLS TABLE: 
@@ -6,11 +6,6 @@
 			====== END TABLE
 
 		Var b is Record
-			====== RECORD rec:
-				====== SYMBOLS TABLE: 
-					Var a is Integer
-				====== END TABLE
-
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:

@@ -1,8 +1,8 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
-		errors is Integer SubRange = 1..100
-		errList is Array of SubRange of Integer with index type Char
-		Var err is Array[Char] of SubRange of Integer
+		Type errors is Integer SubRange [1..100]
+		Type errList is Array of errors with index type Char
+		Var err is errList
 		Const Var noError is Integer = 1
 	====== END TABLE
 ====== DEFINE: 

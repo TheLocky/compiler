@@ -1,6 +1,6 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
-		a is Array of String with index type SubRange of Integer
+		Type a is Array of String with index type SubRange of Integer
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:

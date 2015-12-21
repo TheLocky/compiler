@@ -1,7 +1,7 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
-		Real is Alias of Double
-		Var a is Alias of Double
+		Type Real is Alias of Double
+		Var a is Real
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:

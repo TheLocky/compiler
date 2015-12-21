@@ -1,7 +1,7 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
-		int is Alias of Integer
-		Var a is Alias of Integer
+		Type int is Alias of Integer
+		Var a is int
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:

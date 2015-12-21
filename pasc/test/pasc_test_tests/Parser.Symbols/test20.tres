@@ -1,10 +1,10 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
-		states is Array of SubRange of Char with index type Alias of Char
-		myChar is Alias of Char
-		errCode is Char SubRange = 49..53
+		Type states is Array of errCode with index type myChar
+		Type myChar is Alias of Char
+		Type errCode is Char SubRange [49..53]
 		Const Var noError is Char = 49
-		Var statesArr is Array[Alias of Char] of SubRange of Char
+		Var statesArr is states
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:

@@ -1,7 +1,7 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
 		Var r is Record
-			====== RECORD anon:
+			====== RECORD :
 				====== SYMBOLS TABLE: 
 					Var x is Double
 					Var y is Double

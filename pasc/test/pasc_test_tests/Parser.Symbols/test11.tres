@@ -1,4 +1,4 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
 		Const Var a is Integer = 10
 	====== END TABLE

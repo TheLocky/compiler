@@ -1,6 +1,6 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
-		a is Alias of String
+		Type a is Alias of String
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:

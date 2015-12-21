@@ -1,0 +1,10 @@
+function f(a: Integer; b: Char; c: Double): Double;
+begin
+	Result:= a + b + c;
+end;
+var 
+	x,y,z: Integer;
+	r: Double;
+begin
+	r := f(x,y,z);
+end.

@@ -1,7 +1,11 @@
-procedure r;
+type
+	arr = Array of Integer;
+procedure f(a: arr);
 begin
-	r
-end
-
+	a[0] := 1;
+end;
+var
+	a : arr;
 begin
+	a[0] := 0;
 end.

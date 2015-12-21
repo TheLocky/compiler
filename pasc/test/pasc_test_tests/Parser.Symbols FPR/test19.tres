@@ -1,0 +1,42 @@
+====== PROCEDURE start:
+	====== SYMBOLS TABLE: 
+		====== FUNCTION f:
+			====== SYMBOLS TABLE: 
+				Var Result is Double
+				Var a is Integer
+				Var b is Char
+				Var c is Double
+			====== END TABLE
+		====== PARAMETERS: a:Integer; b:Char; c:Double; 
+		====== RETURN: Double
+		====== DEFINE: 
+			====== BEGIN BLOCK:
+					Result
+				:=
+					(Double)
+								a
+							+
+								(Integer)
+									b
+						+
+							(Integer)
+								c
+			====== END BLOCK
+
+		Var x is Integer
+		Var y is Integer
+		Var r is Double
+		Var z is Integer
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+			r
+		:=
+				f
+			( )
+				x
+				(Char)
+					y
+				(Double)
+					z
+	====== END BLOCK

@@ -1,6 +1,6 @@
-====== PROCEDURE main:
+====== PROCEDURE start:
 	====== SYMBOLS TABLE: 
-		a is Integer SubRange = 1..10
+		Type a is Integer SubRange [1..10]
 	====== END TABLE
 ====== DEFINE: 
 	====== BEGIN BLOCK:

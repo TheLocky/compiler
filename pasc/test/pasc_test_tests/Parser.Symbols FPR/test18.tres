@@ -1,0 +1,27 @@
+====== PROCEDURE start:
+	====== SYMBOLS TABLE: 
+		Type arr is Array of Integer with index type Integer
+		====== PROCEDURE f:
+			====== SYMBOLS TABLE: 
+				Var a is arr
+			====== END TABLE
+		====== PARAMETERS: a:arr; 
+		====== DEFINE: 
+			====== BEGIN BLOCK:
+						a
+					[ ]
+						0
+				:=
+					1
+			====== END BLOCK
+
+		Var a is arr
+	====== END TABLE
+====== DEFINE: 
+	====== BEGIN BLOCK:
+				a
+			[ ]
+				0
+		:=
+			0
+	====== END BLOCK
