@@ -29,8 +29,10 @@ NodeAssign *Parser::ParseAssign(NodeExpr *left) {
     Token tk = tokenizer.Next();
     NodeExpr *right = ParseBinary(0);
     thExpectedExpr(right);
-	if (left->type->typeId() == TypeProcedure)
+	if (left->type->typeId() == TypeProcedure || left->type->typeId() == TypeFunction)
 		throw SyntaxException(tk, "left operand is not assignable");
+	if (right->type == nullptr)
+		throw SyntaxException(tk, "right operand not return value");
     createCast(left->type, &right);
     return new NodeAssign(left, right);
 }
@@ -47,8 +49,15 @@ NodeExpr *Parser::ParseBinary(int level) {
         if (checkToken(op.tokenType, lexList(TK_AND, TK_OR, 0))) { //bool
             createCast(GLOBAL_BOOLEAN, &left);
             createCast(GLOBAL_BOOLEAN, &right);
-        } else
-            createCast(&left, &right);
+		}
+		else {
+			if (left->type->typeId() == TypeRecord || right->type->typeId() == TypeRecord ||
+				left->type->typeId() == TypeArray || right->type->typeId() == TypeArray ||
+				left->type->typeId() == TypeProcedure || right->type->typeId() == TypeProcedure) {
+				throw SyntaxException(op, "invalid operands for binary");
+			} else
+				createCast(&left, &right);
+		}
         left = new ExprBinary(op, left, right);
         if (level == 2) left->type = GLOBAL_BOOLEAN;
         op = tokenizer.Get();
@@ -86,6 +95,8 @@ NodeExpr *Parser::ParseFactor() {
         if (checkToken(factor.tokenType, lexList(TK_ADDR, TK_NOT, TK_ADD, TK_SUB, 0))) {
             tokenizer.Next();
             result = ParseFactor();
+			if (result->type->typeId() == TypeProcedure || result->type->typeId() == TypeRecord || result->type->typeId() == TypeArray)
+				throw SyntaxException(factor, "invalid arguments for unary operation");
             result = new ExprUnary(factor, result);
         }
         else if (factor.tokenType == TK_ID) {
@@ -142,7 +153,7 @@ NodeExpr *Parser::ParseDesignator() {
 			auto proc = currentTable->getCastedSymbol<SymProcedure *>(ident);
 			if (!proc) throw SyntaxException(ident, string("symbol '") + ident.text + "' is not callable");
 			if (params.size() != proc->parameters.size())
-				throw SyntaxException(ident, string("undefined symbol '") + ident.text + "'");
+				throw SyntaxException(ident, string("invalid arguments to '") + ident.text + "'");
 			for (int i = 0; i < (int)params.size(); i++) {
 				auto parVar = proc->localTable->getCastedSymbol<SymVar *>(proc->parameters[i].name);
 				createCast(parVar->type, &params[i]);
@@ -298,7 +309,7 @@ int Parser::createCast(SymType *type, NodeExpr **node, string err) {
     if (!checkTypeAllow || type == nullptr || (*node)->type == nullptr)
         return -1;
 
-    if (err.empty()) err = string("can't cast ") + (*node)->type->name + " to " + type->name;
+	if (err.empty()) err = string("can't cast ") + (*node)->type->getTypeStr() + " to " + type->getTypeStr();
 
     type = type->peelAlias();
     SymType *nodeType = (*node)->type->peelAlias();
